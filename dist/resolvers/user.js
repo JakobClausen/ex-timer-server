@@ -31,7 +31,11 @@ const type_graphql_1 = require("type-graphql");
 const config_1 = require("../config/config");
 const inputType_1 = require("./types/inputType");
 const updateUser_1 = require("./types/updateUser");
-const validateUserInput_1 = require("./validation/validateUserInput");
+const validateRegistration_1 = require("./validation/validateRegistration");
+const validateUpdateUser_1 = require("./validation/validateUpdateUser");
+const sendEmails_1 = require("../utils/sendEmails");
+const uuid_1 = require("uuid");
+const validateChangePassword_1 = require("./validation/validateChangePassword");
 let LoginData = class LoginData {
 };
 __decorate([
@@ -72,29 +76,75 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UserResolver = class UserResolver {
-    me({ em, req }) {
+    changePassword(token, newPassword, { redis }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!req.session.userId) {
-                return null;
+            const key = config_1.FORGET_PASSWORD_PREFIX + token;
+            const userId = yield redis.get(key);
+            if (!userId) {
+                return {
+                    errors: [
+                        {
+                            field: "token",
+                            message: "Something went wrong!",
+                        },
+                    ],
+                };
             }
-            const user = yield em.findOne(User_1.User, { id: req.session.userId });
-            return user;
+            const errors = validateChangePassword_1.validateChangePassword(newPassword);
+            if (errors) {
+                return { errors };
+            }
+            const userIdNum = parseInt(userId);
+            const user = yield User_1.User.findOne(userIdNum);
+            if (!user) {
+                return {
+                    errors: [
+                        {
+                            field: "token",
+                            message: "Something went wrong!",
+                        },
+                    ],
+                };
+            }
+            yield User_1.User.update({ id: userIdNum }, { password: yield argon2_1.default.hash(newPassword) });
+            yield redis.del(key);
+            return { user };
         });
     }
-    register(data, { em, req }) {
+    forgotPassword(email, { redis }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const errors = validateUserInput_1.validateRegistration(data);
+            const user = yield User_1.User.findOne({ where: { email } });
+            if (!user) {
+                return true;
+            }
+            const token = uuid_1.v4();
+            yield redis.set(config_1.FORGET_PASSWORD_PREFIX + token, user.id, "ex", 1000 * 60 * 60 * 24 * 3);
+            const link = `<a href="http://localhost:3000/reset-password/${token}">Reset Password</a>`;
+            yield sendEmails_1.sendEmail(email, link);
+            return true;
+        });
+    }
+    me({ req }) {
+        if (!req.session.userId) {
+            return null;
+        }
+        return User_1.User.findOne(req.session.userId);
+    }
+    register(data, { req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const errors = validateRegistration_1.validateRegistration(data);
             if (errors) {
                 return { errors };
             }
             const hash = yield argon2_1.default.hash(data.password);
-            const user = em.create(User_1.User, {
-                email: data.email,
-                password: hash,
-                username: data.username,
-            });
+            let user;
             try {
-                yield em.persistAndFlush(user);
+                user = yield User_1.User.create({
+                    email: data.email,
+                    password: hash,
+                    username: data.username,
+                }).save();
+                req.session.userId = user.id;
             }
             catch (err) {
                 if (err.code === "23505") {
@@ -103,13 +153,12 @@ let UserResolver = class UserResolver {
                     };
                 }
             }
-            req.session.userId = user.id;
             return { user };
         });
     }
-    login(data, { em, req }) {
+    login(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(User_1.User, { email: data.email });
+            const user = yield User_1.User.findOne({ where: { email: data.email } });
             if (!user) {
                 return {
                     errors: [
@@ -148,68 +197,40 @@ let UserResolver = class UserResolver {
             });
         });
     }
-    users({ em }) {
-        return em.find(User_1.User, {});
-    }
-    user(id, { em }) {
-        return em.findOne(User_1.User, { id });
-    }
-    updateUser(data, { em }) {
+    updateUser(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(User_1.User, { id: data.id });
+            const user = yield User_1.User.findOne(data.id);
             if (!user) {
-                return null;
+                return { errors: [{ field: "id", message: "User not found" }] };
             }
-            if (typeof data.password !== "undefined" ||
-                typeof data.email !== "undefined" ||
-                typeof data.username !== "undefined") {
-                const errors = validateUserInput_1.validateRegistration(data);
-                if (errors) {
-                    return { errors };
-                }
-                user.email = data.email;
-                user.password = data.password;
-                user.username = data.username;
-                yield em.persistAndFlush(user);
-                return { user };
-            }
-            if (typeof data.username !== "undefined") {
-                const errors = validateUserInput_1.validateRegistration(data);
-                if (errors) {
-                    return { errors };
-                }
-                user.username = data.username;
-                yield em.persistAndFlush(user);
-                return { user };
-            }
-            if (typeof data.password !== "undefined") {
-                const errors = validateUserInput_1.validateRegistration(data);
-                if (errors) {
-                    return { errors };
-                }
-                user.password = data.password;
-                yield em.persistAndFlush(user);
-                return { user };
-            }
-            if (typeof data.email !== "undefined") {
-                const errors = validateUserInput_1.validateRegistration(data);
-                if (errors) {
-                    return { errors };
-                }
-                user.email = data.email;
-                yield em.persistAndFlush(user);
-                return { user };
-            }
-            return null;
+            const updatedUser = validateUpdateUser_1.validateUpdateUser(data, user);
+            return updatedUser;
         });
     }
 };
+__decorate([
+    type_graphql_1.Mutation(() => UserResponse),
+    __param(0, type_graphql_1.Arg("token")),
+    __param(1, type_graphql_1.Arg("newPassword")),
+    __param(2, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "changePassword", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    __param(0, type_graphql_1.Arg("email")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "forgotPassword", null);
 __decorate([
     type_graphql_1.Query(() => User_1.User, { nullable: true }),
     __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "me", null);
 __decorate([
     type_graphql_1.Mutation(() => UserResponse),
@@ -235,26 +256,10 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "logout", null);
 __decorate([
-    type_graphql_1.Query(() => [User_1.User]),
-    __param(0, type_graphql_1.Ctx()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UserResolver.prototype, "users", null);
-__decorate([
-    type_graphql_1.Query(() => User_1.User, { nullable: true }),
-    __param(0, type_graphql_1.Arg("id", () => type_graphql_1.Int)),
-    __param(1, type_graphql_1.Ctx()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", Promise)
-], UserResolver.prototype, "user", null);
-__decorate([
     type_graphql_1.Mutation(() => UserResponse, { nullable: true }),
     __param(0, type_graphql_1.Arg("data")),
-    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [updateUser_1.UpdateUser, Object]),
+    __metadata("design:paramtypes", [updateUser_1.UpdateUser]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "updateUser", null);
 UserResolver = __decorate([

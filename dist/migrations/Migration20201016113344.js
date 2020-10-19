@@ -9,15 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Migration20201005173646 = void 0;
+exports.Migration20201016113344 = void 0;
 const migrations_1 = require("@mikro-orm/migrations");
-class Migration20201005173646 extends migrations_1.Migration {
+class Migration20201016113344 extends migrations_1.Migration {
     up() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.addSql('create table "user" ("id" serial primary key, "created_at" timestamptz(0) not null, "updated_at" timestamptz(0) not null, "email" text not null, "password" text not null);');
-            this.addSql('alter table "user" add constraint "user_email_unique" unique ("email");');
         });
     }
 }
-exports.Migration20201005173646 = Migration20201005173646;
-//# sourceMappingURL=Migration20201005173646.js.map
+exports.Migration20201016113344 = Migration20201016113344;
+//# sourceMappingURL=Migration20201016113344.js.map

@@ -19,11 +19,11 @@ export const validateRegistration = (data: RegistrationData) => {
     ];
   }
 
-  if (data.password.length <= 3) {
+  if (data.password.length <= 5) {
     return [
       {
         field: "password",
-        message: "Length must be greater than 3",
+        message: "Length must be greater than 5",
       },
     ];
   }

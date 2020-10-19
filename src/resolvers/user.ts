@@ -6,16 +6,19 @@ import {
   Ctx,
   Field,
   InputType,
-  Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
 } from "type-graphql";
-import { COOKIE_NAME } from "../config/config";
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../config/config";
 import { RegistrationData } from "./types/inputType";
 import { UpdateUser } from "./types/updateUser";
-import { validateRegistration } from "./validation/validateUserInput";
+import { validateRegistration } from "./validation/validateRegistration";
+import { validateUpdateUser } from "./validation/validateUpdateUser";
+import { sendEmail } from "../utils/sendEmails";
+import { v4 } from "uuid";
+import { validateChangePassword } from "./validation/validateChangePassword";
 
 @InputType()
 class LoginData {
@@ -45,36 +48,105 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg("token") token: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { redis }: MyContext
+  ): Promise<UserResponse> {
+    const key = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "Something went wrong!",
+          },
+        ],
+      };
+    }
+    const errors = validateChangePassword(newPassword);
+    if (errors) {
+      return { errors };
+    }
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne(userIdNum);
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "Something went wrong!",
+          },
+        ],
+      };
+    }
+
+    await User.update(
+      { id: userIdNum },
+      { password: await argon2.hash(newPassword) }
+    );
+    await redis.del(key);
+    return { user };
+  }
+
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() { redis }: MyContext
+  ) {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return true;
+    }
+
+    const token = v4();
+
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3
+    );
+
+    const link = `<a href="http://localhost:3000/reset-password/${token}">Reset Password</a>`;
+    await sendEmail(email, link);
+
+    return true;
+  }
+
   // Gets all the users
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { em, req }: MyContext): Promise<User | null> {
+  me(@Ctx() { req }: MyContext) {
     if (!req.session.userId) {
       return null;
     }
-    const user = await em.findOne(User, { id: req.session.userId });
-    return user;
+    return User.findOne(req.session.userId);
   }
 
   // Register user
   @Mutation(() => UserResponse)
   async register(
     @Arg("data") data: RegistrationData,
-    @Ctx() { em, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegistration(data);
     if (errors) {
       return { errors };
     }
     const hash = await argon2.hash(data.password);
-    const user = em.create(User, {
-      email: data.email,
-      password: hash,
-      username: data.username,
-    });
 
     // creating the user
+    let user;
     try {
-      await em.persistAndFlush(user);
+      user = await User.create({
+        email: data.email,
+        password: hash,
+        username: data.username,
+      }).save();
+      req.session.userId = user.id;
     } catch (err) {
       if (err.code === "23505") {
         return {
@@ -83,8 +155,6 @@ export class UserResolver {
       }
     }
 
-    req.session.userId = user.id;
-
     return { user };
   }
 
@@ -92,9 +162,10 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("data") data: LoginData,
-    @Ctx() { em, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { email: data.email });
+    const user = await User.findOne({ where: { email: data.email } });
+
     if (!user) {
       return {
         errors: [
@@ -125,6 +196,7 @@ export class UserResolver {
     return { user };
   }
 
+  // Logout
   @Mutation(() => Boolean)
   logout(@Ctx() { req, res }: MyContext) {
     return new Promise((resolve) => {
@@ -140,73 +212,18 @@ export class UserResolver {
     });
   }
 
-  // Gets all the users
-  @Query(() => [User])
-  users(@Ctx() { em }: MyContext): Promise<User[]> {
-    return em.find(User, {});
-  }
-
-  // Gets user by id
-  @Query(() => User, { nullable: true })
-  user(
-    @Arg("id", () => Int) id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<User | null> {
-    return em.findOne(User, { id });
-  }
-
   // Update a user
   @Mutation(() => UserResponse, { nullable: true })
   async updateUser(
-    @Arg("data") data: UpdateUser,
-    @Ctx() { em }: MyContext
+    @Arg("data") data: UpdateUser
   ): Promise<UserResponse | null> {
-    const user = await em.findOne(User, { id: data.id });
+    const user = await User.findOne(data.id);
     if (!user) {
-      return null;
+      return { errors: [{ field: "id", message: "User not found" }] };
     }
-    if (
-      typeof data.password !== "undefined" ||
-      typeof data.email !== "undefined" ||
-      typeof data.username !== "undefined"
-    ) {
-      const errors = validateRegistration(data);
-      if (errors) {
-        return { errors };
-      }
-      user.email = data.email;
-      user.password = data.password;
-      user.username = data.username;
-      await em.persistAndFlush(user);
-      return { user };
-    }
-    if (typeof data.username !== "undefined") {
-      const errors = validateRegistration(data);
-      if (errors) {
-        return { errors };
-      }
-      user.username = data.username;
-      await em.persistAndFlush(user);
-      return { user };
-    }
-    if (typeof data.password !== "undefined") {
-      const errors = validateRegistration(data);
-      if (errors) {
-        return { errors };
-      }
-      user.password = data.password;
-      await em.persistAndFlush(user);
-      return { user };
-    }
-    if (typeof data.email !== "undefined") {
-      const errors = validateRegistration(data);
-      if (errors) {
-        return { errors };
-      }
-      user.email = data.email;
-      await em.persistAndFlush(user);
-      return { user };
-    }
-    return null;
+    // Update user validation
+    const updatedUser = validateUpdateUser(data, user);
+    // await em.nativeUpdate(User, where: id: user.id, data:{updatedUser})
+    return updatedUser;
   }
 }
