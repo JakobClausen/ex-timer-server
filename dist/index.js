@@ -27,7 +27,7 @@ const User_1 = require("./entities/User");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield typeorm_1.createConnection({
         type: "postgres",
-        database: "gym-postgres2",
+        database: config_1.DB_NAME,
         username: "postgres",
         password: "postgres",
         logging: true,

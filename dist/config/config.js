@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FORGET_PASSWORD_PREFIX = exports.COOKIE_NAME = exports.__PROD__ = exports.DB_TYPE = exports.DB_NAME = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-exports.DB_NAME = process.env.DB_NAME || "gym-postgres";
+exports.DB_NAME = process.env.DB_NAME;
 exports.DB_TYPE = process.env.DB_TYPE || "postgres";
 exports.__PROD__ = process.env.NODE_ENV === "production";
 exports.COOKIE_NAME = "qid";

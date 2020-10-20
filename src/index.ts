@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { COOKIE_NAME, __PROD__ } from "./config/config";
+import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -14,7 +14,7 @@ import { User } from "./entities/User";
 const main = async () => {
   await createConnection({
     type: "postgres",
-    database: "gym-postgres2",
+    database: DB_NAME,
     username: "postgres",
     password: "postgres",
     logging: true,
