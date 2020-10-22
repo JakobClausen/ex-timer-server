@@ -29,52 +29,13 @@ const User_1 = require("../entities/User");
 const argon2_1 = __importDefault(require("argon2"));
 const type_graphql_1 = require("type-graphql");
 const config_1 = require("../config/config");
-const inputType_1 = require("./types/inputType");
-const updateUser_1 = require("./types/updateUser");
+const userTypes_1 = require("./types/userTypes");
 const validateRegistration_1 = require("./validation/validateRegistration");
 const validateUpdateUser_1 = require("./validation/validateUpdateUser");
 const sendEmails_1 = require("../utils/sendEmails");
 const uuid_1 = require("uuid");
 const validateChangePassword_1 = require("./validation/validateChangePassword");
-let LoginData = class LoginData {
-};
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], LoginData.prototype, "email", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], LoginData.prototype, "password", void 0);
-LoginData = __decorate([
-    type_graphql_1.InputType()
-], LoginData);
-let FieldError = class FieldError {
-};
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], FieldError.prototype, "field", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], FieldError.prototype, "message", void 0);
-FieldError = __decorate([
-    type_graphql_1.ObjectType()
-], FieldError);
-let UserResponse = class UserResponse {
-};
-__decorate([
-    type_graphql_1.Field(() => [FieldError], { nullable: true }),
-    __metadata("design:type", Array)
-], UserResponse.prototype, "errors", void 0);
-__decorate([
-    type_graphql_1.Field(() => User_1.User, { nullable: true }),
-    __metadata("design:type", User_1.User)
-], UserResponse.prototype, "user", void 0);
-UserResponse = __decorate([
-    type_graphql_1.ObjectType()
-], UserResponse);
+const typeorm_1 = require("typeorm");
 let UserResolver = class UserResolver {
     changePassword(token, newPassword, { redis }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -207,9 +168,23 @@ let UserResolver = class UserResolver {
             return updatedUser;
         });
     }
+    getUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield typeorm_1.getConnection()
+                .getRepository(User_1.User)
+                .createQueryBuilder("u")
+                .innerJoinAndSelect("u.whiteboards", "w", "w.user_id = u.id")
+                .where({ id })
+                .getOne();
+            if (!user) {
+                throw new Error("asdásd");
+            }
+            return user;
+        });
+    }
 };
 __decorate([
-    type_graphql_1.Mutation(() => UserResponse),
+    type_graphql_1.Mutation(() => userTypes_1.UserResponse),
     __param(0, type_graphql_1.Arg("token")),
     __param(1, type_graphql_1.Arg("newPassword")),
     __param(2, type_graphql_1.Ctx()),
@@ -233,19 +208,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "me", null);
 __decorate([
-    type_graphql_1.Mutation(() => UserResponse),
+    type_graphql_1.Mutation(() => userTypes_1.UserResponse),
     __param(0, type_graphql_1.Arg("data")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [inputType_1.RegistrationData, Object]),
+    __metadata("design:paramtypes", [userTypes_1.RegistrationData, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
 __decorate([
-    type_graphql_1.Mutation(() => UserResponse),
+    type_graphql_1.Mutation(() => userTypes_1.UserResponse),
     __param(0, type_graphql_1.Arg("data")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [LoginData, Object]),
+    __metadata("design:paramtypes", [userTypes_1.LoginData, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
 __decorate([
@@ -256,12 +231,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "logout", null);
 __decorate([
-    type_graphql_1.Mutation(() => UserResponse, { nullable: true }),
+    type_graphql_1.Mutation(() => userTypes_1.UserResponse, { nullable: true }),
     __param(0, type_graphql_1.Arg("data")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [updateUser_1.UpdateUser]),
+    __metadata("design:paramtypes", [userTypes_1.UpdateUser]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "updateUser", null);
+__decorate([
+    type_graphql_1.Query(() => User_1.User),
+    __param(0, type_graphql_1.Arg("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "getUser", null);
 UserResolver = __decorate([
     type_graphql_1.Resolver()
 ], UserResolver);

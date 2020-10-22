@@ -24,6 +24,11 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
 const typeorm_1 = require("typeorm");
 const User_1 = require("./entities/User");
+const Whiteboard_1 = require("./entities/Whiteboard");
+const Whiteboard_2 = require("./resolvers/Whiteboard");
+const Category_1 = require("./entities/Category");
+const ProgrammingRow_1 = require("./entities/ProgrammingRow");
+const chalk_1 = __importDefault(require("chalk"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield typeorm_1.createConnection({
         type: "postgres",
@@ -32,7 +37,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         password: "postgres",
         logging: true,
         synchronize: true,
-        entities: [User_1.User],
+        entities: [User_1.User, Whiteboard_1.Whiteboard, Category_1.Category, ProgrammingRow_1.ProgrammingRow],
     });
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
@@ -53,7 +58,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     const apolloSchema = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [user_1.UserResolver],
+            resolvers: [user_1.UserResolver, Whiteboard_2.WhiteboardResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res, redis }),
@@ -62,7 +67,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         app,
         cors: { origin: false },
     });
-    app.listen(4000, () => console.log("Listening at port 4000"));
+    app.listen(4000, () => console.log(chalk_1.default.black.bgWhite.bold("Listening at port 4000")));
 });
 main();
 //# sourceMappingURL=index.js.map
