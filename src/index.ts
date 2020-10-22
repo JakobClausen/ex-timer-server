@@ -10,6 +10,11 @@ import ConnectRedis from "connect-redis";
 import cors from "cors";
 import { createConnection } from "typeorm";
 import { User } from "./entities/User";
+import { Whiteboard } from "./entities/Whiteboard";
+import { WhiteboardResolver } from "./resolvers/Whiteboard";
+import { Category } from "./entities/Category";
+import { ProgrammingRow } from "./entities/ProgrammingRow";
+import chalk from "chalk";
 
 const main = async () => {
   await createConnection({
@@ -19,7 +24,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [User],
+    entities: [User, Whiteboard, Category, ProgrammingRow],
   });
 
   const app = express();
@@ -49,7 +54,7 @@ const main = async () => {
   // Apollo server
   const apolloSchema = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, WhiteboardResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),
@@ -61,6 +66,8 @@ const main = async () => {
     cors: { origin: false },
   });
 
-  app.listen(4000, () => console.log("Listening at port 4000"));
+  app.listen(4000, () =>
+    console.log(chalk.black.bgWhite.bold("Listening at port 4000"))
+  );
 };
 main();

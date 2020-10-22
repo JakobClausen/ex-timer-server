@@ -1,50 +1,21 @@
 import { User } from "../entities/User";
 import { MyContext } from "src/types";
 import argon2 from "argon2";
-import {
-  Arg,
-  Ctx,
-  Field,
-  InputType,
-  Mutation,
-  ObjectType,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../config/config";
-import { RegistrationData } from "./types/inputType";
-import { UpdateUser } from "./types/updateUser";
+import {
+  LoginData,
+  RegistrationData,
+  UpdateUser,
+  UserResponse,
+} from "./types/userTypes";
 import { validateRegistration } from "./validation/validateRegistration";
 import { validateUpdateUser } from "./validation/validateUpdateUser";
 import { sendEmail } from "../utils/sendEmails";
 import { v4 } from "uuid";
 import { validateChangePassword } from "./validation/validateChangePassword";
-
-@InputType()
-class LoginData {
-  @Field()
-  email: string;
-  @Field()
-  password: string;
-}
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-
-  @Field()
-  message: string;
-}
-
-@ObjectType()
-class UserResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
-
-  @Field(() => User, { nullable: true })
-  user?: User;
-}
+import { Whiteboard } from "src/entities/Whiteboard";
+import { getConnection } from "typeorm";
 
 @Resolver()
 export class UserResolver {
@@ -225,5 +196,20 @@ export class UserResolver {
     const updatedUser = validateUpdateUser(data, user);
     // await em.nativeUpdate(User, where: id: user.id, data:{updatedUser})
     return updatedUser;
+  }
+
+  @Query(() => User)
+  async getUser(@Arg("id") id: number): Promise<User | undefined> {
+    const user = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("u")
+      .innerJoinAndSelect("u.whiteboards", "w", "w.user_id = u.id")
+      .where({ id })
+      .getOne();
+
+    if (!user) {
+      throw new Error("asdásd");
+    }
+    return user;
   }
 }

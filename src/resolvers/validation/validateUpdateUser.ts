@@ -1,5 +1,5 @@
 import { User } from "src/entities/User";
-import { UpdateUser } from "../types/updateUser";
+import { UpdateUser } from "../types/userTypes";
 import argon2 from "argon2";
 
 export const validateUpdateUser = async (data: UpdateUser, user: User) => {

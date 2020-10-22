@@ -8,29 +8,21 @@ import {
   OneToMany,
 } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
-import { Whiteboard } from "./Whiteboard";
+import { ProgrammingRow } from "./ProgrammingRow";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Category extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field(() => String)
-  @Column({ unique: true })
-  email!: string;
-
-  @Field(() => String)
   @Column()
-  username!: string;
+  category!: string;
 
-  @Column()
-  password!: string;
-
-  @Field(() => [Whiteboard])
-  @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.user)
-  whiteboards: Whiteboard[];
+  @OneToMany(() => ProgrammingRow, (programmingRow) => programmingRow.category)
+  programming_rows: ProgrammingRow[];
 
   @Field(() => String)
   @CreateDateColumn()

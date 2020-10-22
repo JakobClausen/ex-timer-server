@@ -1,4 +1,4 @@
-import { RegistrationData } from "../types/inputType";
+import { RegistrationData } from "../types/userTypes";
 
 export const validateRegistration = (data: RegistrationData) => {
   if (!data.email.includes("@")) {
