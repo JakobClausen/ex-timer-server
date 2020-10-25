@@ -14,7 +14,6 @@ import { validateUpdateUser } from "./validation/validateUpdateUser";
 import { sendEmail } from "../utils/sendEmails";
 import { v4 } from "uuid";
 import { validateChangePassword } from "./validation/validateChangePassword";
-import { Whiteboard } from "src/entities/Whiteboard";
 import { getConnection } from "typeorm";
 
 @Resolver()

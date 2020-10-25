@@ -25,23 +25,25 @@ exports.WhiteboardResolver = void 0;
 const Whiteboard_1 = require("../entities/Whiteboard");
 const type_graphql_1 = require("type-graphql");
 const Category_1 = require("../entities/Category");
-const ProgrammingRow_1 = require("../entities/ProgrammingRow");
 const whiteboardTypes_1 = require("./types/whiteboardTypes");
 const isAuth_1 = require("../middleware/isAuth");
 const typeorm_1 = require("typeorm");
+const ProgrammingRow_1 = require("../entities/ProgrammingRow");
 let WhiteboardResolver = class WhiteboardResolver {
     createWhiteboard(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const whiteboard = yield Whiteboard_1.Whiteboard.create({
-                date: data.date,
+                date: data.day,
                 user_id: req.session.userId,
             }).save();
-            yield ProgrammingRow_1.ProgrammingRow.create({
-                title: data.title,
-                markdown: data.markdown,
-                category_id: data.category,
-                whiteboard_id: whiteboard.id,
-            }).save();
+            [data.one, data.two, data.three].map((row) => __awaiter(this, void 0, void 0, function* () {
+                yield ProgrammingRow_1.ProgrammingRow.create({
+                    title: row.title,
+                    markdown: row.workout,
+                    category_id: data.category,
+                    whiteboard_id: whiteboard.id,
+                }).save();
+            }));
             return true;
         });
     }

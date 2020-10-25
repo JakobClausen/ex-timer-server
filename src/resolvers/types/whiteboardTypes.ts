@@ -1,4 +1,4 @@
-import { InputType, Field } from "type-graphql";
+import { InputType, Field, Int } from "type-graphql";
 
 @InputType()
 export class CategoryInput {
@@ -7,16 +7,28 @@ export class CategoryInput {
 }
 
 @InputType()
+export class RowField {
+  @Field()
+  title: string;
+
+  @Field()
+  workout: string;
+}
+
+@InputType()
 export class WhiteboardInput {
   @Field()
-  date!: string;
+  day!: string;
 
-  @Field()
-  title!: string;
-
-  @Field()
-  markdown!: string;
-
-  @Field()
+  @Field(() => Int)
   category!: number;
+
+  @Field(() => RowField)
+  one!: RowField;
+
+  @Field(() => RowField)
+  two!: RowField;
+
+  @Field(() => RowField)
+  three!: RowField;
 }

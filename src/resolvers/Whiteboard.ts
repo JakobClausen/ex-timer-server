@@ -9,10 +9,10 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Category } from "../entities/Category";
-import { ProgrammingRow } from "../entities/ProgrammingRow";
 import { WhiteboardInput, CategoryInput } from "./types/whiteboardTypes";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
+import { ProgrammingRow } from "../entities/ProgrammingRow";
 
 @Resolver()
 export class WhiteboardResolver {
@@ -24,16 +24,18 @@ export class WhiteboardResolver {
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
     const whiteboard = await Whiteboard.create({
-      date: data.date,
+      date: data.day,
       user_id: req.session.userId,
     }).save();
 
-    await ProgrammingRow.create({
-      title: data.title,
-      markdown: data.markdown,
-      category_id: data.category,
-      whiteboard_id: whiteboard.id,
-    }).save();
+    [data.one, data.two, data.three].map(async (row) => {
+      await ProgrammingRow.create({
+        title: row.title,
+        markdown: row.workout,
+        category_id: data.category,
+        whiteboard_id: whiteboard.id,
+      }).save();
+    });
 
     return true;
   }
