@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   OneToMany,
 } from "typeorm";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { ProgrammingRow } from "./ProgrammingRow";
 
 @ObjectType()

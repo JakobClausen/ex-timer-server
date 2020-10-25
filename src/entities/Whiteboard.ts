@@ -9,10 +9,9 @@ import {
   OneToMany,
   JoinColumn,
 } from "typeorm";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { ProgrammingRow } from "./ProgrammingRow";
-import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
 
 @ObjectType()
 @Entity()
