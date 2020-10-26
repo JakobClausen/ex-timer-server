@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Category } from "./Category";
@@ -14,7 +15,7 @@ import { Whiteboard } from "./Whiteboard";
 
 @ObjectType()
 @Entity()
-export class ProgrammingRow extends BaseEntity {
+export class Workout extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
@@ -25,25 +26,25 @@ export class ProgrammingRow extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  markdown!: string;
-
-  @Field()
-  @Column()
-  whiteboard_id: number;
+  workout!: string;
 
   @Field()
   @Column()
   category_id: number;
 
+  @Field()
+  @Column()
+  whiteboard_id: number;
+
   @Field(() => Whiteboard)
+  @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.workout)
   @JoinColumn({ name: "whiteboard_id" })
-  @ManyToOne(() => Whiteboard, (whiteboard) => whiteboard.programming_rows)
-  whiteboard: Whiteboard;
+  whiteboard: Promise<Whiteboard[]>;
 
   @Field(() => Category)
+  @ManyToOne(() => Category, (category) => category.workouts)
   @JoinColumn({ name: "category_id" })
-  @ManyToOne(() => Category, (category) => category.programming_rows)
-  category: Category;
+  category: Promise<Category>;
 
   @Field(() => String)
   @CreateDateColumn()

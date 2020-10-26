@@ -28,7 +28,7 @@ const Category_1 = require("../entities/Category");
 const whiteboardTypes_1 = require("./types/whiteboardTypes");
 const isAuth_1 = require("../middleware/isAuth");
 const typeorm_1 = require("typeorm");
-const ProgrammingRow_1 = require("../entities/ProgrammingRow");
+const Workout_1 = require("../entities/Workout");
 let WhiteboardResolver = class WhiteboardResolver {
     createWhiteboard(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,13 +36,9 @@ let WhiteboardResolver = class WhiteboardResolver {
                 date: data.day,
                 user_id: req.session.userId,
             }).save();
-            [data.one, data.two, data.three].map((row) => __awaiter(this, void 0, void 0, function* () {
-                yield ProgrammingRow_1.ProgrammingRow.create({
-                    title: row.title,
-                    markdown: row.workout,
-                    category_id: data.category,
-                    whiteboard_id: whiteboard.id,
-                }).save();
+            const workouts = [data.one, data.two, data.three];
+            workouts.map((workout) => __awaiter(this, void 0, void 0, function* () {
+                yield Workout_1.Workout.create(Object.assign(Object.assign({}, workout), { category_id: data.category, whiteboard_id: whiteboard.id })).save();
             }));
             return true;
         });
@@ -52,7 +48,7 @@ let WhiteboardResolver = class WhiteboardResolver {
             const response = yield typeorm_1.getConnection()
                 .getRepository(Whiteboard_1.Whiteboard)
                 .createQueryBuilder("w")
-                .innerJoinAndSelect("w.programming_rows", "r", "r.whiteboard_id = w.id")
+                .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
                 .where({ user_id: req.session.userId })
                 .getMany();
             if (!response) {

@@ -13,7 +13,7 @@ exports.Whiteboard = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
 const User_1 = require("./User");
-const ProgrammingRow_1 = require("./ProgrammingRow");
+const Workout_1 = require("./Workout");
 let Whiteboard = class Whiteboard extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -38,10 +38,9 @@ __decorate([
     __metadata("design:type", User_1.User)
 ], Whiteboard.prototype, "user", void 0);
 __decorate([
-    type_graphql_1.Field(() => [ProgrammingRow_1.ProgrammingRow]),
-    typeorm_1.OneToMany(() => ProgrammingRow_1.ProgrammingRow, (programmingRow) => programmingRow.whiteboard),
-    __metadata("design:type", Array)
-], Whiteboard.prototype, "programming_rows", void 0);
+    typeorm_1.OneToMany(() => Workout_1.Workout, (workout) => workout.whiteboard),
+    __metadata("design:type", Promise)
+], Whiteboard.prototype, "workout", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

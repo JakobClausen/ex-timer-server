@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
-import { ProgrammingRow } from "./ProgrammingRow";
+import { Workout } from "./Workout";
 
 @ObjectType()
 @Entity()
@@ -33,12 +33,8 @@ export class Whiteboard extends BaseEntity {
   @ManyToOne(() => User, (user) => user.whiteboards)
   user: User;
 
-  @Field(() => [ProgrammingRow])
-  @OneToMany(
-    () => ProgrammingRow,
-    (programmingRow) => programmingRow.whiteboard
-  )
-  programming_rows: ProgrammingRow[];
+  @OneToMany(() => Workout, (workout) => workout.whiteboard)
+  workout: Promise<Workout[]>;
 
   @Field(() => String)
   @CreateDateColumn()
