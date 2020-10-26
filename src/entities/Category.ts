@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
-import { ProgrammingRow } from "./ProgrammingRow";
+import { Workout } from "./Workout";
 
 @ObjectType()
 @Entity()
@@ -21,8 +21,8 @@ export class Category extends BaseEntity {
   @Column()
   category!: string;
 
-  // @OneToMany(() => ProgrammingRow, (programmingRow) => programmingRow.category)
-  // programming_rows: ProgrammingRow[];
+  @OneToMany(() => Workout, (workout) => workout.category)
+  workouts: Workout[];
 
   @Field(() => String)
   @CreateDateColumn()

@@ -10,12 +10,11 @@ import ConnectRedis from "connect-redis";
 import cors from "cors";
 import { createConnection } from "typeorm";
 import { User } from "./entities/User";
-import { Whiteboard } from "./entities/Whiteboard";
-import { WhiteboardResolver } from "./resolvers/Whiteboard";
-import { Category } from "./entities/Category";
-import { ProgrammingRow } from "./entities/ProgrammingRow";
+import { Workout } from "./entities/Workout";
 import chalk from "chalk";
-import { WhiteboardRowRel } from "./entities/WhiteboardRowRel";
+import { Whiteboard } from "./entities/Whiteboard";
+import { Category } from "./entities/Category";
+import { WhiteboardResolver } from "./resolvers/Whiteboard";
 
 const main = async () => {
   await createConnection({
@@ -25,7 +24,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [User, Whiteboard, Category, ProgrammingRow, WhiteboardRowRel],
+    entities: [User, Whiteboard, Category, Workout],
   });
 
   const app = express();

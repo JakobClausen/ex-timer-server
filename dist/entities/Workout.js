@@ -9,51 +9,63 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Whiteboard = void 0;
+exports.Workout = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
-const User_1 = require("./User");
-const Workout_1 = require("./Workout");
-let Whiteboard = class Whiteboard extends typeorm_1.BaseEntity {
+const Category_1 = require("./Category");
+const Whiteboard_1 = require("./Whiteboard");
+let Workout = class Workout extends typeorm_1.BaseEntity {
 };
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Whiteboard.prototype, "id", void 0);
+], Workout.prototype, "id", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Whiteboard.prototype, "date", void 0);
+], Workout.prototype, "title", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Workout.prototype, "workout", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Whiteboard.prototype, "user_id", void 0);
+], Workout.prototype, "category_id", void 0);
 __decorate([
-    type_graphql_1.Field(() => User_1.User),
-    typeorm_1.JoinColumn({ name: "user_id" }),
-    typeorm_1.ManyToOne(() => User_1.User, (user) => user.whiteboards),
-    __metadata("design:type", User_1.User)
-], Whiteboard.prototype, "user", void 0);
+    type_graphql_1.Field(),
+    typeorm_1.Column(),
+    __metadata("design:type", Number)
+], Workout.prototype, "whiteboard_id", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => Workout_1.Workout, (workout) => workout.whiteboard),
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    typeorm_1.OneToMany(() => Whiteboard_1.Whiteboard, (whiteboard) => whiteboard.workout),
+    typeorm_1.JoinColumn({ name: "whiteboard_id" }),
     __metadata("design:type", Promise)
-], Whiteboard.prototype, "workout", void 0);
+], Workout.prototype, "whiteboard", void 0);
+__decorate([
+    type_graphql_1.Field(() => Category_1.Category),
+    typeorm_1.ManyToOne(() => Category_1.Category, (category) => category.workouts),
+    typeorm_1.JoinColumn({ name: "category_id" }),
+    __metadata("design:type", Promise)
+], Workout.prototype, "category", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)
-], Whiteboard.prototype, "created_at", void 0);
+], Workout.prototype, "created_at", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Date)
-], Whiteboard.prototype, "updated_at", void 0);
-Whiteboard = __decorate([
+], Workout.prototype, "updated_at", void 0);
+Workout = __decorate([
     type_graphql_1.ObjectType(),
     typeorm_1.Entity()
-], Whiteboard);
-exports.Whiteboard = Whiteboard;
-//# sourceMappingURL=Whiteboard.js.map
+], Workout);
+exports.Workout = Workout;
+//# sourceMappingURL=Workout.js.map

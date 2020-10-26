@@ -11,11 +11,11 @@ import {
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Category } from "./Category";
-import { WhiteboardRowRel } from "./WhiteboardRowRel";
+import { Whiteboard } from "./Whiteboard";
 
 @ObjectType()
 @Entity()
-export class ProgrammingRow extends BaseEntity {
+export class Workout extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
@@ -26,22 +26,25 @@ export class ProgrammingRow extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  markdown!: string;
+  workout!: string;
 
   @Field()
   @Column()
   category_id: number;
 
-  @OneToMany(
-    () => WhiteboardRowRel,
-    (whiteboardRowRel) => whiteboardRowRel.programming_row
-  )
-  whiteboard_connection: Promise<WhiteboardRowRel[]>;
+  @Field()
+  @Column()
+  whiteboard_id: number;
+
+  @Field(() => Whiteboard)
+  @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.workout)
+  @JoinColumn({ name: "whiteboard_id" })
+  whiteboard: Promise<Whiteboard[]>;
 
   @Field(() => Category)
+  @ManyToOne(() => Category, (category) => category.workouts)
   @JoinColumn({ name: "category_id" })
-  @ManyToOne(() => Category, (category) => category.programming_rows)
-  category: Category;
+  category: Promise<Category>;
 
   @Field(() => String)
   @CreateDateColumn()

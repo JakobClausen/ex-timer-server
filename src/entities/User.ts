@@ -28,9 +28,9 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  // @Field(() => [Whiteboard])
-  // @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.user)
-  // whiteboards: Whiteboard[];
+  @Field(() => [Whiteboard])
+  @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.user)
+  whiteboards: Whiteboard[];
 
   @Field(() => String)
   @CreateDateColumn()
