@@ -21,8 +21,8 @@ export class Category extends BaseEntity {
   @Column()
   category!: string;
 
-  @OneToMany(() => ProgrammingRow, (programmingRow) => programmingRow.category)
-  programming_rows: ProgrammingRow[];
+  // @OneToMany(() => ProgrammingRow, (programmingRow) => programmingRow.category)
+  // programming_rows: ProgrammingRow[];
 
   @Field(() => String)
   @CreateDateColumn()

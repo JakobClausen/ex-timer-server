@@ -7,10 +7,11 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Category } from "./Category";
-import { Whiteboard } from "./Whiteboard";
+import { WhiteboardRowRel } from "./WhiteboardRowRel";
 
 @ObjectType()
 @Entity()
@@ -29,16 +30,13 @@ export class ProgrammingRow extends BaseEntity {
 
   @Field()
   @Column()
-  whiteboard_id: number;
-
-  @Field()
-  @Column()
   category_id: number;
 
-  @Field(() => Whiteboard)
-  @JoinColumn({ name: "whiteboard_id" })
-  @ManyToOne(() => Whiteboard, (whiteboard) => whiteboard.programming_rows)
-  whiteboard: Whiteboard;
+  @OneToMany(
+    () => WhiteboardRowRel,
+    (whiteboardRowRel) => whiteboardRowRel.programming_row
+  )
+  whiteboard_connection: Promise<WhiteboardRowRel[]>;
 
   @Field(() => Category)
   @JoinColumn({ name: "category_id" })

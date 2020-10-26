@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
-const ProgrammingRow_1 = require("./ProgrammingRow");
 let Category = class Category extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -25,10 +24,6 @@ __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
 ], Category.prototype, "category", void 0);
-__decorate([
-    typeorm_1.OneToMany(() => ProgrammingRow_1.ProgrammingRow, (programmingRow) => programmingRow.category),
-    __metadata("design:type", Array)
-], Category.prototype, "programming_rows", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

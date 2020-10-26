@@ -13,7 +13,7 @@ exports.ProgrammingRow = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
 const Category_1 = require("./Category");
-const Whiteboard_1 = require("./Whiteboard");
+const WhiteboardRowRel_1 = require("./WhiteboardRowRel");
 let ProgrammingRow = class ProgrammingRow extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -35,18 +35,11 @@ __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], ProgrammingRow.prototype, "whiteboard_id", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    typeorm_1.Column(),
-    __metadata("design:type", Number)
 ], ProgrammingRow.prototype, "category_id", void 0);
 __decorate([
-    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
-    typeorm_1.JoinColumn({ name: "whiteboard_id" }),
-    typeorm_1.ManyToOne(() => Whiteboard_1.Whiteboard, (whiteboard) => whiteboard.programming_rows),
-    __metadata("design:type", Whiteboard_1.Whiteboard)
-], ProgrammingRow.prototype, "whiteboard", void 0);
+    typeorm_1.OneToMany(() => WhiteboardRowRel_1.WhiteboardRowRel, (whiteboardRowRel) => whiteboardRowRel.programming_row),
+    __metadata("design:type", Promise)
+], ProgrammingRow.prototype, "whiteboard_connection", void 0);
 __decorate([
     type_graphql_1.Field(() => Category_1.Category),
     typeorm_1.JoinColumn({ name: "category_id" }),

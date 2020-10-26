@@ -15,6 +15,7 @@ import { WhiteboardResolver } from "./resolvers/Whiteboard";
 import { Category } from "./entities/Category";
 import { ProgrammingRow } from "./entities/ProgrammingRow";
 import chalk from "chalk";
+import { WhiteboardRowRel } from "./entities/WhiteboardRowRel";
 
 const main = async () => {
   await createConnection({
@@ -24,7 +25,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [User, Whiteboard, Category, ProgrammingRow],
+    entities: [User, Whiteboard, Category, ProgrammingRow, WhiteboardRowRel],
   });
 
   const app = express();

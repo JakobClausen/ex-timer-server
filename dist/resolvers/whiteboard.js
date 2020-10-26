@@ -29,6 +29,7 @@ const whiteboardTypes_1 = require("./types/whiteboardTypes");
 const isAuth_1 = require("../middleware/isAuth");
 const typeorm_1 = require("typeorm");
 const ProgrammingRow_1 = require("../entities/ProgrammingRow");
+const WhiteboardRowRel_1 = require("../entities/WhiteboardRowRel");
 let WhiteboardResolver = class WhiteboardResolver {
     createWhiteboard(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,12 +37,20 @@ let WhiteboardResolver = class WhiteboardResolver {
                 date: data.day,
                 user_id: req.session.userId,
             }).save();
-            [data.one, data.two, data.three].map((row) => __awaiter(this, void 0, void 0, function* () {
-                yield ProgrammingRow_1.ProgrammingRow.create({
+            const workouts = [data.one, data.two, data.three];
+            const workoutIds = [];
+            workouts.map((row) => __awaiter(this, void 0, void 0, function* () {
+                let newRow = yield ProgrammingRow_1.ProgrammingRow.create({
                     title: row.title,
                     markdown: row.workout,
                     category_id: data.category,
+                }).save();
+                workoutIds.push(newRow.id);
+            }));
+            workoutIds.map((workoutId) => __awaiter(this, void 0, void 0, function* () {
+                yield WhiteboardRowRel_1.WhiteboardRowRel.create({
                     whiteboard_id: whiteboard.id,
+                    programming_row_id: workoutId,
                 }).save();
             }));
             return true;

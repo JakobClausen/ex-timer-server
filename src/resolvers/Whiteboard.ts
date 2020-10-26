@@ -9,10 +9,15 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Category } from "../entities/Category";
-import { WhiteboardInput, CategoryInput } from "./types/whiteboardTypes";
+import {
+  WhiteboardInput,
+  CategoryInput,
+  RowField,
+} from "./types/whiteboardTypes";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { ProgrammingRow } from "../entities/ProgrammingRow";
+import { WhiteboardRowRel } from "../entities/WhiteboardRowRel";
 
 @Resolver()
 export class WhiteboardResolver {
@@ -23,17 +28,36 @@ export class WhiteboardResolver {
     @Arg("data") data: WhiteboardInput,
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
+    // const delWhiteboard = await getConnection()
+    //   .createQueryBuilder()
+    //   .delete()
+    //   .from(Whiteboard)
+    //   .where("user_id = :id", { id: req.session.userId })
+    //   .returning("*")
+    //   .execute();
+
+    //Create new Whiteboard
     const whiteboard = await Whiteboard.create({
       date: data.day,
       user_id: req.session.userId,
     }).save();
 
-    [data.one, data.two, data.three].map(async (row) => {
-      await ProgrammingRow.create({
+    const workouts = [data.one, data.two, data.three];
+    const workoutIds: any = [];
+
+    workouts.map(async (row: RowField) => {
+      let newRow = await ProgrammingRow.create({
         title: row.title,
         markdown: row.workout,
         category_id: data.category,
+      }).save();
+      workoutIds.push(newRow.id);
+    });
+
+    workoutIds.map(async (workoutId: any) => {
+      await WhiteboardRowRel.create({
         whiteboard_id: whiteboard.id,
+        programming_row_id: workoutId,
       }).save();
     });
 

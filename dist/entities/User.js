@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
-const Whiteboard_1 = require("./Whiteboard");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -34,11 +33,6 @@ __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
-__decorate([
-    type_graphql_1.Field(() => [Whiteboard_1.Whiteboard]),
-    typeorm_1.OneToMany(() => Whiteboard_1.Whiteboard, (whiteboard) => whiteboard.user),
-    __metadata("design:type", Array)
-], User.prototype, "whiteboards", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),
