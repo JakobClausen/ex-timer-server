@@ -9,7 +9,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Category } from "../entities/Category";
-import { WhiteboardInput, CategoryInput } from "./types/whiteboardTypes";
+import { CategoryInput, DaysInput } from "./types/whiteboardTypes";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { Workout } from "../entities/Workout";
@@ -20,23 +20,35 @@ export class WhiteboardResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async createWhiteboard(
-    @Arg("data") data: WhiteboardInput,
+    @Arg("data") data: DaysInput,
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
     //Create new Whiteboard
-    const whiteboard = await Whiteboard.create({
-      date: data.day,
-      user_id: req.session.userId,
-    }).save();
+    const days = [
+      data.Monday,
+      data.Tuseday,
+      data.Wednesday,
+      data.Thursday,
+      data.Friday,
+      data.Saturday,
+      data.Sunday,
+    ];
 
-    const workouts = [data.one, data.two, data.three];
-
-    workouts.map(async (workout) => {
-      await Workout.create({
-        ...workout,
-        category_id: data.category,
-        whiteboard_id: whiteboard.id,
+    days.map(async (day) => {
+      const whiteboard = await Whiteboard.create({
+        date: day.day,
+        user_id: req.session.userId,
       }).save();
+
+      const workouts = [day.one, day.two, day.three];
+
+      workouts.map(async (workout) => {
+        await Workout.create({
+          ...workout,
+          category_id: day.category,
+          whiteboard_id: whiteboard.id,
+        }).save();
+      });
     });
 
     return true;

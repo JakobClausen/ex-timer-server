@@ -1,11 +1,13 @@
-import { InputType, Field, Int } from "type-graphql";
+import { InputType, Field, Int, ObjectType } from "type-graphql";
 
+@ObjectType()
 @InputType()
 export class CategoryInput {
   @Field()
   category!: string;
 }
 
+@ObjectType()
 @InputType()
 export class RowField {
   @Field()
@@ -15,6 +17,7 @@ export class RowField {
   workout: string;
 }
 
+@ObjectType()
 @InputType()
 export class WhiteboardInput {
   @Field()
@@ -31,4 +34,29 @@ export class WhiteboardInput {
 
   @Field(() => RowField)
   three!: RowField;
+}
+
+@ObjectType()
+@InputType()
+export class DaysInput {
+  @Field(() => WhiteboardInput)
+  Monday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Tuseday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Wednesday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Thursday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Friday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Saturday!: WhiteboardInput;
+
+  @Field(() => WhiteboardInput)
+  Sunday!: WhiteboardInput;
 }
