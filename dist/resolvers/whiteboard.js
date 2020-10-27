@@ -32,13 +32,24 @@ const Workout_1 = require("../entities/Workout");
 let WhiteboardResolver = class WhiteboardResolver {
     createWhiteboard(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const whiteboard = yield Whiteboard_1.Whiteboard.create({
-                date: data.day,
-                user_id: req.session.userId,
-            }).save();
-            const workouts = [data.one, data.two, data.three];
-            workouts.map((workout) => __awaiter(this, void 0, void 0, function* () {
-                yield Workout_1.Workout.create(Object.assign(Object.assign({}, workout), { category_id: data.category, whiteboard_id: whiteboard.id })).save();
+            const days = [
+                data.Monday,
+                data.Tuseday,
+                data.Wednesday,
+                data.Thursday,
+                data.Friday,
+                data.Saturday,
+                data.Sunday,
+            ];
+            days.map((day) => __awaiter(this, void 0, void 0, function* () {
+                const whiteboard = yield Whiteboard_1.Whiteboard.create({
+                    date: day.day,
+                    user_id: req.session.userId,
+                }).save();
+                const workouts = [day.one, day.two, day.three];
+                workouts.map((workout) => __awaiter(this, void 0, void 0, function* () {
+                    yield Workout_1.Workout.create(Object.assign(Object.assign({}, workout), { category_id: day.category, whiteboard_id: whiteboard.id })).save();
+                }));
             }));
             return true;
         });
@@ -71,7 +82,7 @@ __decorate([
     __param(0, type_graphql_1.Arg("data")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [whiteboardTypes_1.WhiteboardInput, Object]),
+    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput, Object]),
     __metadata("design:returntype", Promise)
 ], WhiteboardResolver.prototype, "createWhiteboard", null);
 __decorate([

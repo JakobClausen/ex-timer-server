@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
+exports.DaysInput = exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
 const type_graphql_1 = require("type-graphql");
 let CategoryInput = class CategoryInput {
 };
@@ -18,6 +18,7 @@ __decorate([
     __metadata("design:type", String)
 ], CategoryInput.prototype, "category", void 0);
 CategoryInput = __decorate([
+    type_graphql_1.ObjectType(),
     type_graphql_1.InputType()
 ], CategoryInput);
 exports.CategoryInput = CategoryInput;
@@ -32,6 +33,7 @@ __decorate([
     __metadata("design:type", String)
 ], RowField.prototype, "workout", void 0);
 RowField = __decorate([
+    type_graphql_1.ObjectType(),
     type_graphql_1.InputType()
 ], RowField);
 exports.RowField = RowField;
@@ -58,7 +60,43 @@ __decorate([
     __metadata("design:type", RowField)
 ], WhiteboardInput.prototype, "three", void 0);
 WhiteboardInput = __decorate([
+    type_graphql_1.ObjectType(),
     type_graphql_1.InputType()
 ], WhiteboardInput);
 exports.WhiteboardInput = WhiteboardInput;
+let DaysInput = class DaysInput {
+};
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Monday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Tuseday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Wednesday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Thursday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Friday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Saturday", void 0);
+__decorate([
+    type_graphql_1.Field(() => WhiteboardInput),
+    __metadata("design:type", WhiteboardInput)
+], DaysInput.prototype, "Sunday", void 0);
+DaysInput = __decorate([
+    type_graphql_1.ObjectType(),
+    type_graphql_1.InputType()
+], DaysInput);
+exports.DaysInput = DaysInput;
 //# sourceMappingURL=whiteboardTypes.js.map
