@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Category } from "./Category";
@@ -37,12 +36,16 @@ export class Workout extends BaseEntity {
   whiteboard_id: number;
 
   @Field(() => Whiteboard)
-  @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.workout)
+  @ManyToOne(() => Whiteboard, (whiteboard) => whiteboard.workout, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "whiteboard_id" })
   whiteboard: Promise<Whiteboard[]>;
 
   @Field(() => Category)
-  @ManyToOne(() => Category, (category) => category.workouts)
+  @ManyToOne(() => Category, (category) => category.workouts, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "category_id" })
   category: Promise<Category>;
 

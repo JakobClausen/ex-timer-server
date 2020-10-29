@@ -34,10 +34,11 @@ __decorate([
 __decorate([
     type_graphql_1.Field(() => User_1.User),
     typeorm_1.JoinColumn({ name: "user_id" }),
-    typeorm_1.ManyToOne(() => User_1.User, (user) => user.whiteboards),
+    typeorm_1.ManyToOne(() => User_1.User, (user) => user.whiteboards, { onDelete: "CASCADE" }),
     __metadata("design:type", User_1.User)
 ], Whiteboard.prototype, "user", void 0);
 __decorate([
+    type_graphql_1.Field(() => [Workout_1.Workout]),
     typeorm_1.OneToMany(() => Workout_1.Workout, (workout) => workout.whiteboard),
     __metadata("design:type", Promise)
 ], Whiteboard.prototype, "workout", void 0);

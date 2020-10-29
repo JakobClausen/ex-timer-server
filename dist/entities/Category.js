@@ -26,6 +26,7 @@ __decorate([
     __metadata("design:type", String)
 ], Category.prototype, "category", void 0);
 __decorate([
+    type_graphql_1.Field(() => [Workout_1.Workout]),
     typeorm_1.OneToMany(() => Workout_1.Workout, (workout) => workout.category),
     __metadata("design:type", Array)
 ], Category.prototype, "workouts", void 0);

@@ -1,22 +1,30 @@
 import "reflect-metadata";
-import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
+// server / apollo / typeORM / redis
 import express from "express";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import { UserResolver } from "./resolvers/user";
-import Redis from "ioredis";
 import session from "express-session";
-import ConnectRedis from "connect-redis";
-import cors from "cors";
+import { createServer } from "http";
+import { ApolloServer } from "apollo-server-express";
+import { execute, subscribe } from "graphql";
+import { buildSchema } from "type-graphql";
+import { SubscriptionServer } from "subscriptions-transport-ws";
 import { createConnection } from "typeorm";
+// redis
+import { pubsub, RedisStore, redis } from "./redis";
+// resolvers
+import { UserResolver } from "./resolvers/user";
+import { WhiteboardResolver } from "./resolvers/Whiteboard";
+// enteties
 import { User } from "./entities/User";
 import { Workout } from "./entities/Workout";
-import chalk from "chalk";
 import { Whiteboard } from "./entities/Whiteboard";
 import { Category } from "./entities/Category";
-import { WhiteboardResolver } from "./resolvers/Whiteboard";
+// other
+import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
+import cors from "cors";
+import chalk from "chalk";
 
 const main = async () => {
+  // typeORM
   await createConnection({
     type: "postgres",
     database: DB_NAME,
@@ -29,12 +37,15 @@ const main = async () => {
 
   const app = express();
 
-  // Redis session store
-  const RedisStore = ConnectRedis(session);
-  const redis = new Redis();
+  // cors
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
-  app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-
+  // cookie
   app.use(
     session({
       name: COOKIE_NAME,
@@ -56,8 +67,11 @@ const main = async () => {
     schema: await buildSchema({
       resolvers: [UserResolver, WhiteboardResolver],
       validate: false,
+      pubSub: pubsub,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    playground: true,
+
+    context: ({ req, res }) => ({ req, res, redis, pubsub }),
   });
 
   // Middleware
@@ -66,8 +80,24 @@ const main = async () => {
     cors: { origin: false },
   });
 
-  app.listen(4000, () =>
-    console.log(chalk.black.bgWhite.bold("Listening at port 4000"))
-  );
+  // server with ws
+  const server = createServer(app);
+  server.listen(4000, async () => {
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema: await buildSchema({
+          resolvers: [UserResolver, WhiteboardResolver],
+          validate: false,
+          pubSub: pubsub,
+        }),
+      },
+      {
+        server: server,
+      }
+    ),
+      console.log(chalk.black.bgWhite.bold("Listening at port 4000"));
+  });
 };
 main();

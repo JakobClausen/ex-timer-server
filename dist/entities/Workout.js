@@ -43,13 +43,17 @@ __decorate([
 ], Workout.prototype, "whiteboard_id", void 0);
 __decorate([
     type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
-    typeorm_1.OneToMany(() => Whiteboard_1.Whiteboard, (whiteboard) => whiteboard.workout),
+    typeorm_1.ManyToOne(() => Whiteboard_1.Whiteboard, (whiteboard) => whiteboard.workout, {
+        onDelete: "CASCADE",
+    }),
     typeorm_1.JoinColumn({ name: "whiteboard_id" }),
     __metadata("design:type", Promise)
 ], Workout.prototype, "whiteboard", void 0);
 __decorate([
     type_graphql_1.Field(() => Category_1.Category),
-    typeorm_1.ManyToOne(() => Category_1.Category, (category) => category.workouts),
+    typeorm_1.ManyToOne(() => Category_1.Category, (category) => category.workouts, {
+        onDelete: "CASCADE",
+    }),
     typeorm_1.JoinColumn({ name: "category_id" }),
     __metadata("design:type", Promise)
 ], Workout.prototype, "category", void 0);

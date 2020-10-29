@@ -3,27 +3,46 @@ import { MyContext } from "src/types";
 import {
   Arg,
   Ctx,
+  Int,
   Mutation,
+  Publisher,
+  PubSub,
   Query,
   Resolver,
+  Root,
+  Subscription,
   UseMiddleware,
 } from "type-graphql";
 import { Category } from "../entities/Category";
-import { CategoryInput, DaysInput } from "./types/whiteboardTypes";
+import {
+  CategoryInput,
+  DaysInput,
+  SubscriptionData,
+} from "./types/whiteboardTypes";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { Workout } from "../entities/Workout";
 
 @Resolver()
 export class WhiteboardResolver {
+  @Subscription(() => SubscriptionData, {
+    topics: "SUBWHITEBOARD",
+  })
+  async subWhiteboard(@Root() data: DaysInput): Promise<SubscriptionData> {
+    return data;
+  }
+
   // create whiteboard
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async createWhiteboard(
     @Arg("data") data: DaysInput,
-    @Ctx() { req }: MyContext
+    @Ctx() { req }: MyContext,
+    @PubSub("SUBWHITEBOARD") publish: Publisher<DaysInput>
   ): Promise<Boolean> {
-    //Create new Whiteboard
+    await publish(data);
+    await Whiteboard.delete({ user_id: req.session.userId });
+    // create new whiteboards
     const days = [
       data.Monday,
       data.Tuseday,

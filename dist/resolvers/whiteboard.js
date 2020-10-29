@@ -30,8 +30,15 @@ const isAuth_1 = require("../middleware/isAuth");
 const typeorm_1 = require("typeorm");
 const Workout_1 = require("../entities/Workout");
 let WhiteboardResolver = class WhiteboardResolver {
-    createWhiteboard(data, { req }) {
+    subWhiteboard(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            return data;
+        });
+    }
+    createWhiteboard(data, { req }, publish) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield publish(data);
+            yield Whiteboard_1.Whiteboard.delete({ user_id: req.session.userId });
             const days = [
                 data.Monday,
                 data.Tuseday,
@@ -77,12 +84,22 @@ let WhiteboardResolver = class WhiteboardResolver {
     }
 };
 __decorate([
+    type_graphql_1.Subscription(() => whiteboardTypes_1.SubscriptionData, {
+        topics: "SUBWHITEBOARD",
+    }),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput]),
+    __metadata("design:returntype", Promise)
+], WhiteboardResolver.prototype, "subWhiteboard", null);
+__decorate([
     type_graphql_1.Mutation(() => Boolean),
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("data")),
     __param(1, type_graphql_1.Ctx()),
+    __param(2, type_graphql_1.PubSub("SUBWHITEBOARD")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput, Object]),
+    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput, Object, Function]),
     __metadata("design:returntype", Promise)
 ], WhiteboardResolver.prototype, "createWhiteboard", null);
 __decorate([
