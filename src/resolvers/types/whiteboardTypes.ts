@@ -60,3 +60,60 @@ export class DaysInput {
   @Field(() => WhiteboardInput)
   Sunday!: WhiteboardInput;
 }
+
+///////////////////////
+// Subscription types
+
+@ObjectType()
+@InputType()
+export class Three {
+  @Field()
+  title: string;
+
+  @Field()
+  workout: string;
+}
+
+@ObjectType()
+@InputType()
+export class Two {
+  @Field()
+  day!: string;
+
+  @Field(() => Int)
+  category!: number;
+
+  @Field(() => Three)
+  one!: Three;
+
+  @Field(() => Three)
+  two!: Three;
+
+  @Field(() => Three)
+  three!: Three;
+}
+
+@ObjectType()
+@InputType()
+export class SubscriptionData {
+  @Field(() => Two)
+  Monday!: Two;
+
+  @Field(() => Two)
+  Tuseday!: Two;
+
+  @Field(() => Two)
+  Wednesday!: Two;
+
+  @Field(() => Two)
+  Thursday!: Two;
+
+  @Field(() => Two)
+  Friday!: Two;
+
+  @Field(() => Two)
+  Saturday!: Two;
+
+  @Field(() => Two)
+  Sunday!: Two;
+}

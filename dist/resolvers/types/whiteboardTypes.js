@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysInput = exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
+exports.SubscriptionData = exports.Two = exports.Three = exports.DaysInput = exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
 const type_graphql_1 = require("type-graphql");
 let CategoryInput = class CategoryInput {
 };
@@ -99,4 +99,81 @@ DaysInput = __decorate([
     type_graphql_1.InputType()
 ], DaysInput);
 exports.DaysInput = DaysInput;
+let Three = class Three {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], Three.prototype, "title", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], Three.prototype, "workout", void 0);
+Three = __decorate([
+    type_graphql_1.ObjectType(),
+    type_graphql_1.InputType()
+], Three);
+exports.Three = Three;
+let Two = class Two {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], Two.prototype, "day", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], Two.prototype, "category", void 0);
+__decorate([
+    type_graphql_1.Field(() => Three),
+    __metadata("design:type", Three)
+], Two.prototype, "one", void 0);
+__decorate([
+    type_graphql_1.Field(() => Three),
+    __metadata("design:type", Three)
+], Two.prototype, "two", void 0);
+__decorate([
+    type_graphql_1.Field(() => Three),
+    __metadata("design:type", Three)
+], Two.prototype, "three", void 0);
+Two = __decorate([
+    type_graphql_1.ObjectType(),
+    type_graphql_1.InputType()
+], Two);
+exports.Two = Two;
+let SubscriptionData = class SubscriptionData {
+};
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Monday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Tuseday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Wednesday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Thursday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Friday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Saturday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Two),
+    __metadata("design:type", Two)
+], SubscriptionData.prototype, "Sunday", void 0);
+SubscriptionData = __decorate([
+    type_graphql_1.ObjectType(),
+    type_graphql_1.InputType()
+], SubscriptionData);
+exports.SubscriptionData = SubscriptionData;
 //# sourceMappingURL=whiteboardTypes.js.map

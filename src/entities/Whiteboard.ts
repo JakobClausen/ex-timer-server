@@ -30,9 +30,10 @@ export class Whiteboard extends BaseEntity {
 
   @Field(() => User)
   @JoinColumn({ name: "user_id" })
-  @ManyToOne(() => User, (user) => user.whiteboards)
+  @ManyToOne(() => User, (user) => user.whiteboards, { onDelete: "CASCADE" })
   user: User;
 
+  @Field(() => [Workout])
   @OneToMany(() => Workout, (workout) => workout.whiteboard)
   workout: Promise<Workout[]>;
 

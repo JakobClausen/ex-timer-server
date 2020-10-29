@@ -21,6 +21,7 @@ export class Category extends BaseEntity {
   @Column()
   category!: string;
 
+  @Field(() => [Workout])
   @OneToMany(() => Workout, (workout) => workout.category)
   workouts: Workout[];
 
