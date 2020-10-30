@@ -31,6 +31,9 @@ const Category_1 = require("./entities/Category");
 const config_1 = require("./config/config");
 const cors_1 = __importDefault(require("cors"));
 const chalk_1 = __importDefault(require("chalk"));
+const Schedule_1 = require("./entities/Schedule");
+const GymClass_1 = require("./entities/GymClass");
+const Schedule_2 = require("./resolvers/Schedule");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield typeorm_1.createConnection({
         type: "postgres",
@@ -39,7 +42,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         password: "postgres",
         logging: true,
         synchronize: true,
-        entities: [User_1.User, Whiteboard_2.Whiteboard, Category_1.Category, Workout_1.Workout],
+        entities: [User_1.User, Whiteboard_2.Whiteboard, Category_1.Category, Workout_1.Workout, Schedule_1.Schedule, GymClass_1.GymClass],
     });
     const app = express_1.default();
     app.use(cors_1.default({
@@ -61,7 +64,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     const apolloSchema = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [user_1.UserResolver, Whiteboard_1.WhiteboardResolver],
+            resolvers: [user_1.UserResolver, Whiteboard_1.WhiteboardResolver, Schedule_2.ScheduleResolver],
             validate: false,
             pubSub: redis_1.pubsub,
         }),
@@ -78,7 +81,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             execute: graphql_1.execute,
             subscribe: graphql_1.subscribe,
             schema: yield type_graphql_1.buildSchema({
-                resolvers: [user_1.UserResolver, Whiteboard_1.WhiteboardResolver],
+                resolvers: [user_1.UserResolver, Whiteboard_1.WhiteboardResolver, Schedule_2.ScheduleResolver],
                 validate: false,
                 pubSub: redis_1.pubsub,
             }),

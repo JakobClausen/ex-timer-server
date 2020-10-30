@@ -3,7 +3,6 @@ import { MyContext } from "src/types";
 import {
   Arg,
   Ctx,
-  Int,
   Mutation,
   Publisher,
   PubSub,

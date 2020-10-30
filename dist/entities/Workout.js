@@ -47,7 +47,7 @@ __decorate([
         onDelete: "CASCADE",
     }),
     typeorm_1.JoinColumn({ name: "whiteboard_id" }),
-    __metadata("design:type", Promise)
+    __metadata("design:type", Whiteboard_1.Whiteboard)
 ], Workout.prototype, "whiteboard", void 0);
 __decorate([
     type_graphql_1.Field(() => Category_1.Category),
