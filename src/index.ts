@@ -22,6 +22,9 @@ import { Category } from "./entities/Category";
 import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
 import cors from "cors";
 import chalk from "chalk";
+import { Schedule } from "./entities/Schedule";
+import { GymClass } from "./entities/GymClass";
+import { ScheduleResolver } from "./resolvers/Schedule";
 
 const main = async () => {
   // typeORM
@@ -32,7 +35,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [User, Whiteboard, Category, Workout],
+    entities: [User, Whiteboard, Category, Workout, Schedule, GymClass],
   });
 
   const app = express();
@@ -65,7 +68,7 @@ const main = async () => {
   // Apollo server
   const apolloSchema = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, WhiteboardResolver],
+      resolvers: [UserResolver, WhiteboardResolver, ScheduleResolver],
       validate: false,
       pubSub: pubsub,
     }),
@@ -88,7 +91,7 @@ const main = async () => {
         execute,
         subscribe,
         schema: await buildSchema({
-          resolvers: [UserResolver, WhiteboardResolver],
+          resolvers: [UserResolver, WhiteboardResolver, ScheduleResolver],
           validate: false,
           pubSub: pubsub,
         }),

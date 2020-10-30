@@ -10,22 +10,22 @@ import {
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Category } from "./Category";
-import { Whiteboard } from "./Whiteboard";
+import { Schedule } from "./Schedule";
 
 @ObjectType()
 @Entity()
-export class Workout extends BaseEntity {
+export class GymClass extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field(() => String)
   @Column()
-  title!: string;
+  start_time!: string;
 
   @Field(() => String)
   @Column()
-  workout!: string;
+  end_time!: string;
 
   @Field()
   @Column()
@@ -33,14 +33,14 @@ export class Workout extends BaseEntity {
 
   @Field()
   @Column()
-  whiteboard_id: number;
+  schedule_id: number;
 
-  @Field(() => Whiteboard)
-  @ManyToOne(() => Whiteboard, (whiteboard) => whiteboard.workout, {
+  @Field(() => Schedule)
+  @ManyToOne(() => Schedule, (schedule) => schedule.gymClass, {
     onDelete: "CASCADE",
   })
-  @JoinColumn({ name: "whiteboard_id" })
-  whiteboard: Whiteboard;
+  @JoinColumn({ name: "schedule_id" })
+  schedule: Schedule;
 
   @Field(() => Category)
   @ManyToOne(() => Category, (category) => category.workouts, {
