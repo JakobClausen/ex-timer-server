@@ -4,57 +4,34 @@ import {
   Arg,
   Ctx,
   Mutation,
-  Publisher,
-  PubSub,
   Query,
   Resolver,
-  Root,
-  Subscription,
   UseMiddleware,
 } from "type-graphql";
 import { Category } from "../entities/Category";
-import {
-  CategoryInput,
-  DaysInput,
-  SubscriptionData,
-} from "./types/whiteboardTypes";
+import { CategoryInput, DaysInput } from "./types/whiteboardTypes";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { Workout } from "../entities/Workout";
+import { createMarkdown } from "../utils/createMarkdown";
 
 @Resolver()
 export class WhiteboardResolver {
-  @Subscription(() => SubscriptionData, {
-    topics: "SUBWHITEBOARD",
-  })
-  async subWhiteboard(@Root() data: DaysInput): Promise<SubscriptionData> {
-    return data;
-  }
-
   // create whiteboard
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async createWhiteboard(
     @Arg("data") data: DaysInput,
-    @Ctx() { req }: MyContext,
-    @PubSub("SUBWHITEBOARD") publish: Publisher<DaysInput>
+    @Ctx() { req }: MyContext
   ): Promise<Boolean> {
-    await publish(data);
     await Whiteboard.delete({ user_id: req.session.userId });
-    // create new whiteboards
-    const days = [
-      data.Monday,
-      data.Tuseday,
-      data.Wednesday,
-      data.Thursday,
-      data.Friday,
-      data.Saturday,
-      data.Sunday,
-    ];
+    const days = createMarkdown(data);
+
+    console.log(days);
 
     days.map(async (day) => {
       const whiteboard = await Whiteboard.create({
-        date: day.day,
+        day: day.day,
         user_id: req.session.userId,
       }).save();
 
@@ -72,18 +49,39 @@ export class WhiteboardResolver {
     return true;
   }
 
-  @Query(() => [Whiteboard])
-  async getWhiteboard(@Ctx() { req }: MyContext): Promise<Whiteboard[]> {
+  @Query(() => Whiteboard)
+  async getWhiteboard(
+    @Ctx() { req }: MyContext,
+    @Arg("day") day: string
+  ): Promise<Whiteboard> {
     const response = await getConnection()
       .getRepository(Whiteboard)
       .createQueryBuilder("w")
       .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
-      .where({ user_id: req.session.userId })
+      .where("user_id = :id ", { id: req.session.userId })
+      .andWhere("day = :day", { day })
+      .getOne();
+
+    if (!response) {
+      throw new Error("asdásd");
+    }
+
+    return response;
+  }
+
+  @Query(() => [Whiteboard])
+  async getAllWhiteboards(@Ctx() { req }: MyContext): Promise<Whiteboard[]> {
+    const response = await getConnection()
+      .getRepository(Whiteboard)
+      .createQueryBuilder("w")
+      .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
+      .where("user_id = :id ", { id: req.session.userId })
       .getMany();
 
     if (!response) {
       throw new Error("asdásd");
     }
+
     return response;
   }
 

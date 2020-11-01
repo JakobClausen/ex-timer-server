@@ -22,7 +22,7 @@ export class Whiteboard extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  date!: string;
+  day!: string;
 
   @Field()
   @Column()

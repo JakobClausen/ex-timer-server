@@ -2,29 +2,26 @@ import "reflect-metadata";
 // server / apollo / typeORM / redis
 import express from "express";
 import session from "express-session";
-import { createServer } from "http";
 import { ApolloServer } from "apollo-server-express";
-import { execute, subscribe } from "graphql";
 import { buildSchema } from "type-graphql";
-import { SubscriptionServer } from "subscriptions-transport-ws";
 import { createConnection } from "typeorm";
 // redis
-import { pubsub, RedisStore, redis } from "./redis";
+import { RedisStore, redis } from "./redis";
 // resolvers
 import { UserResolver } from "./resolvers/user";
 import { WhiteboardResolver } from "./resolvers/Whiteboard";
+import { ScheduleResolver } from "./resolvers/Schedule";
 // enteties
 import { User } from "./entities/User";
 import { Workout } from "./entities/Workout";
 import { Whiteboard } from "./entities/Whiteboard";
 import { Category } from "./entities/Category";
+import { Schedule } from "./entities/Schedule";
+import { GymClass } from "./entities/GymClass";
 // other
 import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
 import cors from "cors";
 import chalk from "chalk";
-import { Schedule } from "./entities/Schedule";
-import { GymClass } from "./entities/GymClass";
-import { ScheduleResolver } from "./resolvers/Schedule";
 
 const main = async () => {
   // typeORM
@@ -70,11 +67,10 @@ const main = async () => {
     schema: await buildSchema({
       resolvers: [UserResolver, WhiteboardResolver, ScheduleResolver],
       validate: false,
-      pubSub: pubsub,
     }),
     playground: true,
 
-    context: ({ req, res }) => ({ req, res, redis, pubsub }),
+    context: ({ req, res }) => ({ req, res, redis }),
   });
 
   // Middleware
@@ -83,24 +79,8 @@ const main = async () => {
     cors: { origin: false },
   });
 
-  // server with ws
-  const server = createServer(app);
-  server.listen(4000, async () => {
-    new SubscriptionServer(
-      {
-        execute,
-        subscribe,
-        schema: await buildSchema({
-          resolvers: [UserResolver, WhiteboardResolver, ScheduleResolver],
-          validate: false,
-          pubSub: pubsub,
-        }),
-      },
-      {
-        server: server,
-      }
-    ),
-      console.log(chalk.black.bgWhite.bold("Listening at port 4000"));
+  app.listen(4000, () => {
+    console.log(chalk.black.bgWhite.bold("Listening at port 4000"));
   });
 };
 main();

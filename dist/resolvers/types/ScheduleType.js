@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScheduleClassSub = exports.ScheduleSub = exports.ClassSub = exports.ScheduleClassInput = exports.ScheduleInput = exports.ClassInput = void 0;
+exports.ScheduleClassInput = exports.ScheduleInput = exports.ClassInput = void 0;
 const type_graphql_1 = require("type-graphql");
 let ClassInput = class ClassInput {
 };
@@ -80,73 +80,4 @@ ScheduleClassInput = __decorate([
     type_graphql_1.InputType()
 ], ScheduleClassInput);
 exports.ScheduleClassInput = ScheduleClassInput;
-let ClassSub = class ClassSub {
-};
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], ClassSub.prototype, "start_time", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], ClassSub.prototype, "end_time", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Number)
-], ClassSub.prototype, "category", void 0);
-ClassSub = __decorate([
-    type_graphql_1.ObjectType(),
-    type_graphql_1.InputType()
-], ClassSub);
-exports.ClassSub = ClassSub;
-let ScheduleSub = class ScheduleSub {
-};
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], ScheduleSub.prototype, "day", void 0);
-__decorate([
-    type_graphql_1.Field(() => [ClassSub]),
-    __metadata("design:type", Array)
-], ScheduleSub.prototype, "classes", void 0);
-ScheduleSub = __decorate([
-    type_graphql_1.ObjectType(),
-    type_graphql_1.InputType()
-], ScheduleSub);
-exports.ScheduleSub = ScheduleSub;
-let ScheduleClassSub = class ScheduleClassSub {
-};
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Monday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Tuseday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Wednesday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Thursday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Friday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Saturday", void 0);
-__decorate([
-    type_graphql_1.Field(() => ScheduleSub),
-    __metadata("design:type", ScheduleSub)
-], ScheduleClassSub.prototype, "Sunday", void 0);
-ScheduleClassSub = __decorate([
-    type_graphql_1.ObjectType(),
-    type_graphql_1.InputType()
-], ScheduleClassSub);
-exports.ScheduleClassSub = ScheduleClassSub;
 //# sourceMappingURL=ScheduleType.js.map

@@ -2,41 +2,19 @@ import { GymClass } from "../entities/GymClass";
 import { Schedule } from "../entities/Schedule";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "src/types";
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Publisher,
-  PubSub,
-  Resolver,
-  Root,
-  Subscription,
-  UseMiddleware,
-} from "type-graphql";
+import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { BaseEntity } from "typeorm";
-import { ScheduleClassInput, ScheduleClassSub } from "./types/ScheduleType";
+import { ScheduleClassInput } from "./types/ScheduleType";
 
 @Resolver()
 export class ScheduleResolver extends BaseEntity {
-  @Subscription(() => ScheduleClassSub, {
-    topics: "SCHEDULE",
-  })
-  async subSchedule(
-    @Root() data: ScheduleClassInput
-  ): Promise<ScheduleClassSub> {
-    return data;
-  }
-
   // create schedule
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async createSchedule(
     @Ctx() { req }: MyContext,
-    @Arg("data") data: ScheduleClassInput,
-    @PubSub("SCHEDULE") publish: Publisher<ScheduleClassInput>
+    @Arg("data") data: ScheduleClassInput
   ) {
-    await publish(data);
-
     await Schedule.delete({ user_id: req.session.userId });
 
     const days = [

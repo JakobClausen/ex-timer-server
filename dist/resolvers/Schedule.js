@@ -29,14 +29,8 @@ const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const ScheduleType_1 = require("./types/ScheduleType");
 let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
-    subSchedule(data) {
+    createSchedule({ req }, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return data;
-        });
-    }
-    createSchedule({ req }, data, publish) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield publish(data);
             yield Schedule_1.Schedule.delete({ user_id: req.session.userId });
             const days = [
                 data.Monday,
@@ -66,22 +60,12 @@ let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
     }
 };
 __decorate([
-    type_graphql_1.Subscription(() => ScheduleType_1.ScheduleClassSub, {
-        topics: "SCHEDULE",
-    }),
-    __param(0, type_graphql_1.Root()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ScheduleType_1.ScheduleClassInput]),
-    __metadata("design:returntype", Promise)
-], ScheduleResolver.prototype, "subSchedule", null);
-__decorate([
     type_graphql_1.Mutation(() => Boolean),
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Ctx()),
     __param(1, type_graphql_1.Arg("data")),
-    __param(2, type_graphql_1.PubSub("SCHEDULE")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, ScheduleType_1.ScheduleClassInput, Function]),
+    __metadata("design:paramtypes", [Object, ScheduleType_1.ScheduleClassInput]),
     __metadata("design:returntype", Promise)
 ], ScheduleResolver.prototype, "createSchedule", null);
 ScheduleResolver = __decorate([

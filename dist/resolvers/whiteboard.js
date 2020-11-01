@@ -29,28 +29,16 @@ const whiteboardTypes_1 = require("./types/whiteboardTypes");
 const isAuth_1 = require("../middleware/isAuth");
 const typeorm_1 = require("typeorm");
 const Workout_1 = require("../entities/Workout");
+const createMarkdown_1 = require("../utils/createMarkdown");
 let WhiteboardResolver = class WhiteboardResolver {
-    subWhiteboard(data) {
+    createWhiteboard(data, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return data;
-        });
-    }
-    createWhiteboard(data, { req }, publish) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield publish(data);
             yield Whiteboard_1.Whiteboard.delete({ user_id: req.session.userId });
-            const days = [
-                data.Monday,
-                data.Tuseday,
-                data.Wednesday,
-                data.Thursday,
-                data.Friday,
-                data.Saturday,
-                data.Sunday,
-            ];
+            const days = createMarkdown_1.createMarkdown(data);
+            console.log(days);
             days.map((day) => __awaiter(this, void 0, void 0, function* () {
                 const whiteboard = yield Whiteboard_1.Whiteboard.create({
-                    date: day.day,
+                    day: day.day,
                     user_id: req.session.userId,
                 }).save();
                 const workouts = [day.one, day.two, day.three];
@@ -61,13 +49,28 @@ let WhiteboardResolver = class WhiteboardResolver {
             return true;
         });
     }
-    getWhiteboard({ req }) {
+    getWhiteboard({ req }, day) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield typeorm_1.getConnection()
                 .getRepository(Whiteboard_1.Whiteboard)
                 .createQueryBuilder("w")
                 .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
-                .where({ user_id: req.session.userId })
+                .where("user_id = :id ", { id: req.session.userId })
+                .andWhere("day = :day", { day })
+                .getOne();
+            if (!response) {
+                throw new Error("asdásd");
+            }
+            return response;
+        });
+    }
+    getAllWhiteboards({ req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield typeorm_1.getConnection()
+                .getRepository(Whiteboard_1.Whiteboard)
+                .createQueryBuilder("w")
+                .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
+                .where("user_id = :id ", { id: req.session.userId })
                 .getMany();
             if (!response) {
                 throw new Error("asdásd");
@@ -84,31 +87,29 @@ let WhiteboardResolver = class WhiteboardResolver {
     }
 };
 __decorate([
-    type_graphql_1.Subscription(() => whiteboardTypes_1.SubscriptionData, {
-        topics: "SUBWHITEBOARD",
-    }),
-    __param(0, type_graphql_1.Root()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput]),
-    __metadata("design:returntype", Promise)
-], WhiteboardResolver.prototype, "subWhiteboard", null);
-__decorate([
     type_graphql_1.Mutation(() => Boolean),
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("data")),
     __param(1, type_graphql_1.Ctx()),
-    __param(2, type_graphql_1.PubSub("SUBWHITEBOARD")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput, Object, Function]),
+    __metadata("design:paramtypes", [whiteboardTypes_1.DaysInput, Object]),
     __metadata("design:returntype", Promise)
 ], WhiteboardResolver.prototype, "createWhiteboard", null);
+__decorate([
+    type_graphql_1.Query(() => Whiteboard_1.Whiteboard),
+    __param(0, type_graphql_1.Ctx()),
+    __param(1, type_graphql_1.Arg("day")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], WhiteboardResolver.prototype, "getWhiteboard", null);
 __decorate([
     type_graphql_1.Query(() => [Whiteboard_1.Whiteboard]),
     __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], WhiteboardResolver.prototype, "getWhiteboard", null);
+], WhiteboardResolver.prototype, "getAllWhiteboards", null);
 __decorate([
     type_graphql_1.Mutation(() => Category_1.Category),
     __param(0, type_graphql_1.Arg("data")),
