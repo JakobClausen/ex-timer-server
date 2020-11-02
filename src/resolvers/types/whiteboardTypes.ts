@@ -43,7 +43,7 @@ export class DaysInput {
   Monday!: WhiteboardInput;
 
   @Field(() => WhiteboardInput)
-  tuesday!: WhiteboardInput;
+  Tuesday!: WhiteboardInput;
 
   @Field(() => WhiteboardInput)
   Wednesday!: WhiteboardInput;
