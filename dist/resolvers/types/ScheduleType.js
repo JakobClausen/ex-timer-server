@@ -54,7 +54,7 @@ __decorate([
 __decorate([
     type_graphql_1.Field(() => ScheduleInput),
     __metadata("design:type", ScheduleInput)
-], ScheduleClassInput.prototype, "Tuseday", void 0);
+], ScheduleClassInput.prototype, "tuesday", void 0);
 __decorate([
     type_graphql_1.Field(() => ScheduleInput),
     __metadata("design:type", ScheduleInput)
