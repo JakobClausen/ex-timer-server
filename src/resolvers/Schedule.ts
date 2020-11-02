@@ -26,7 +26,7 @@ export class ScheduleResolver extends BaseEntity {
 
     const days = [
       data.Monday,
-      data.tuesday,
+      data.Tuesday,
       data.Wednesday,
       data.Thursday,
       data.Friday,
