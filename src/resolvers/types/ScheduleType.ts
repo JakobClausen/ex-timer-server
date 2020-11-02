@@ -30,7 +30,7 @@ export class ScheduleClassInput {
   Monday!: ScheduleInput;
 
   @Field(() => ScheduleInput)
-  tuesday!: ScheduleInput;
+  Tuesday!: ScheduleInput;
 
   @Field(() => ScheduleInput)
   Wednesday!: ScheduleInput;
