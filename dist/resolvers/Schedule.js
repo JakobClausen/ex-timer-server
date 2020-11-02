@@ -34,7 +34,7 @@ let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
             yield Schedule_1.Schedule.delete({ user_id: req.session.userId });
             const days = [
                 data.Monday,
-                data.Tuseday,
+                data.tuesday,
                 data.Wednesday,
                 data.Thursday,
                 data.Friday,
