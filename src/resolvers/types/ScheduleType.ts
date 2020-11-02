@@ -47,3 +47,27 @@ export class ScheduleClassInput {
   @Field(() => ScheduleInput)
   Sunday!: ScheduleInput;
 }
+
+///////////////
+// Query return
+@ObjectType()
+@InputType()
+export class ClassResponse {
+  @Field()
+  start_time!: string;
+
+  @Field()
+  end_time!: string;
+
+  @Field()
+  category_id!: number;
+}
+
+@ObjectType()
+export class ScheduleResponse {
+  @Field()
+  day!: string;
+
+  @Field(() => [ClassResponse])
+  gymClass!: ClassResponse[];
+}

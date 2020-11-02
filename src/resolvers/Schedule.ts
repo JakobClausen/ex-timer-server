@@ -2,9 +2,18 @@ import { GymClass } from "../entities/GymClass";
 import { Schedule } from "../entities/Schedule";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "src/types";
-import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
-import { BaseEntity } from "typeorm";
-import { ScheduleClassInput } from "./types/ScheduleType";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
+import { BaseEntity, getConnection } from "typeorm";
+import { ScheduleClassInput, ScheduleResponse } from "./types/ScheduleType";
 
 @Resolver()
 export class ScheduleResolver extends BaseEntity {
@@ -44,5 +53,24 @@ export class ScheduleResolver extends BaseEntity {
     });
 
     return true;
+  }
+
+  @Query(() => [ScheduleResponse])
+  async getDaySchedule(
+    @Arg("day") day: string,
+    @Ctx() { req }: MyContext
+  ): Promise<ScheduleResponse[]> {
+    const response = await getConnection()
+      .getRepository(Schedule)
+      .createQueryBuilder("s")
+      .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
+      .where("user_id = :id ", { id: req.session.userId })
+      .andWhere("day = :day", { day })
+      .getMany();
+
+    if (!response) {
+      throw new Error("Something went wrong");
+    }
+    return response;
   }
 }
