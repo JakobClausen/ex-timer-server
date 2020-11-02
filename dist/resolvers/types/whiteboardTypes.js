@@ -73,7 +73,7 @@ __decorate([
 __decorate([
     type_graphql_1.Field(() => WhiteboardInput),
     __metadata("design:type", WhiteboardInput)
-], DaysInput.prototype, "tuesday", void 0);
+], DaysInput.prototype, "Tuesday", void 0);
 __decorate([
     type_graphql_1.Field(() => WhiteboardInput),
     __metadata("design:type", WhiteboardInput)
