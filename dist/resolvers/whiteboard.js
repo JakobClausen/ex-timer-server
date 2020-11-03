@@ -43,7 +43,12 @@ let WhiteboardResolver = class WhiteboardResolver {
                 }).save();
                 const workouts = [day.one, day.two, day.three];
                 workouts.map((workout) => __awaiter(this, void 0, void 0, function* () {
-                    yield Workout_1.Workout.create(Object.assign(Object.assign({}, workout), { category_id: day.category, whiteboard_id: whiteboard.id })).save();
+                    yield Workout_1.Workout.create({
+                        title: workout.title,
+                        workout: workout.workout,
+                        category_id: day.category,
+                        whiteboard_id: whiteboard.id,
+                    }).save();
                 }));
             }));
             return true;

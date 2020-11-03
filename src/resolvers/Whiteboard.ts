@@ -39,7 +39,8 @@ export class WhiteboardResolver {
 
       workouts.map(async (workout) => {
         await Workout.create({
-          ...workout,
+          title: workout.title,
+          workout: workout.workout,
           category_id: day.category,
           whiteboard_id: whiteboard.id,
         }).save();
