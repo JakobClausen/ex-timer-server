@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { Category } from "./Category";
 import { Whiteboard } from "./Whiteboard";
 
@@ -26,6 +26,10 @@ export class Workout extends BaseEntity {
   @Field(() => String)
   @Column()
   workout!: string;
+
+  @Field(() => Int)
+  @Column()
+  order: number;
 
   @Field()
   @Column()

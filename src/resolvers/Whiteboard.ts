@@ -27,12 +27,11 @@ export class WhiteboardResolver {
     await Whiteboard.delete({ user_id: req.session.userId });
     const days = createMarkdown(data);
 
-    console.log(days);
-
     days.map(async (day) => {
       const whiteboard = await Whiteboard.create({
         day: day.day,
         user_id: req.session.userId,
+        order: day.order,
       }).save();
 
       const workouts = [day.one, day.two, day.three];
@@ -41,6 +40,7 @@ export class WhiteboardResolver {
         await Workout.create({
           title: workout.title,
           workout: workout.workout,
+          order: workout.order,
           category_id: day.category,
           whiteboard_id: whiteboard.id,
         }).save();
@@ -77,13 +77,27 @@ export class WhiteboardResolver {
       .createQueryBuilder("w")
       .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
       .where("user_id = :id ", { id: req.session.userId })
+      .orderBy({ "w.order": "ASC", "r.order": "ASC" })
       .getMany();
 
     if (!response) {
-      throw new Error("asdásd");
+      throw new Error("Something went wrong!");
     }
 
+    console.log("Response", response);
+
     return response;
+
+    // return {
+    // AllWhiteboardsResponse
+    //   Monday: response[1],
+    //   Tuesday: response[5],
+    //   Wednesday: response[6],
+    //   Thursday: response[4],
+    //   Friday: response[0],
+    //   Saturday: response[2],
+    //   Sunday: response[3],
+    // };
   }
 
   // create a category
