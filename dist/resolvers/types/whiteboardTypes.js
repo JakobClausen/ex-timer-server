@@ -49,8 +49,8 @@ __decorate([
     __metadata("design:type", String)
 ], WhiteboardInput.prototype, "day", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
 ], WhiteboardInput.prototype, "category", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),

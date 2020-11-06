@@ -41,7 +41,7 @@ export class WhiteboardResolver {
           title: workout.title,
           workout: workout.workout,
           order: workout.order,
-          category_id: day.category,
+          category_id: parseInt(day.category),
           whiteboard_id: whiteboard.id,
         }).save();
       });
@@ -61,10 +61,11 @@ export class WhiteboardResolver {
       .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
       .where("user_id = :id ", { id: req.session.userId })
       .andWhere("day = :day", { day })
+      .orderBy({ "r.order": "ASC" })
       .getOne();
 
     if (!response) {
-      throw new Error("asdásd");
+      throw new Error("Something went wrong!");
     }
 
     return response;
@@ -84,20 +85,7 @@ export class WhiteboardResolver {
       throw new Error("Something went wrong!");
     }
 
-    console.log("Response", response);
-
     return response;
-
-    // return {
-    // AllWhiteboardsResponse
-    //   Monday: response[1],
-    //   Tuesday: response[5],
-    //   Wednesday: response[6],
-    //   Thursday: response[4],
-    //   Friday: response[0],
-    //   Saturday: response[2],
-    //   Sunday: response[3],
-    // };
   }
 
   // create a category

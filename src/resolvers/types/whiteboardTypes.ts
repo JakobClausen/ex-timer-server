@@ -27,8 +27,8 @@ export class WhiteboardInput {
   @Field()
   day!: string;
 
-  @Field(() => Int)
-  category!: number;
+  @Field(() => String)
+  category!: string;
 
   @Field(() => Int)
   order!: number;
