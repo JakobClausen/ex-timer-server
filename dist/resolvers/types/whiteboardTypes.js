@@ -9,7 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysInput = exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
+exports.AllWhiteboardsResponse = exports.DaysInput = exports.WhiteboardInput = exports.RowField = exports.CategoryInput = void 0;
+const Whiteboard_1 = require("../../entities/Whiteboard");
 const type_graphql_1 = require("type-graphql");
 let CategoryInput = class CategoryInput {
 };
@@ -32,6 +33,10 @@ __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
 ], RowField.prototype, "workout", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], RowField.prototype, "order", void 0);
 RowField = __decorate([
     type_graphql_1.ObjectType(),
     type_graphql_1.InputType()
@@ -44,9 +49,13 @@ __decorate([
     __metadata("design:type", String)
 ], WhiteboardInput.prototype, "day", void 0);
 __decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], WhiteboardInput.prototype, "category", void 0);
+__decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
     __metadata("design:type", Number)
-], WhiteboardInput.prototype, "category", void 0);
+], WhiteboardInput.prototype, "order", void 0);
 __decorate([
     type_graphql_1.Field(() => RowField),
     __metadata("design:type", RowField)
@@ -99,4 +108,38 @@ DaysInput = __decorate([
     type_graphql_1.InputType()
 ], DaysInput);
 exports.DaysInput = DaysInput;
+let AllWhiteboardsResponse = class AllWhiteboardsResponse {
+};
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Monday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Tuesday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Wednesday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Thursday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Friday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Saturday", void 0);
+__decorate([
+    type_graphql_1.Field(() => Whiteboard_1.Whiteboard),
+    __metadata("design:type", Whiteboard_1.Whiteboard)
+], AllWhiteboardsResponse.prototype, "Sunday", void 0);
+AllWhiteboardsResponse = __decorate([
+    type_graphql_1.ObjectType()
+], AllWhiteboardsResponse);
+exports.AllWhiteboardsResponse = AllWhiteboardsResponse;
 //# sourceMappingURL=whiteboardTypes.js.map

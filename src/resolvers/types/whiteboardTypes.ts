@@ -1,3 +1,4 @@
+import { Whiteboard } from "../../entities/Whiteboard";
 import { InputType, Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -15,6 +16,9 @@ export class RowField {
 
   @Field()
   workout: string;
+
+  @Field()
+  order: number;
 }
 
 @ObjectType()
@@ -23,8 +27,11 @@ export class WhiteboardInput {
   @Field()
   day!: string;
 
+  @Field(() => String)
+  category!: string;
+
   @Field(() => Int)
-  category!: number;
+  order!: number;
 
   @Field(() => RowField)
   one!: RowField;
@@ -59,4 +66,28 @@ export class DaysInput {
 
   @Field(() => WhiteboardInput)
   Sunday!: WhiteboardInput;
+}
+
+@ObjectType()
+export class AllWhiteboardsResponse {
+  @Field(() => Whiteboard)
+  Monday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Tuesday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Wednesday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Thursday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Friday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Saturday!: Whiteboard;
+
+  @Field(() => Whiteboard)
+  Sunday!: Whiteboard;
 }

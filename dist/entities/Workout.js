@@ -32,6 +32,11 @@ __decorate([
     __metadata("design:type", String)
 ], Workout.prototype, "workout", void 0);
 __decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    typeorm_1.Column(),
+    __metadata("design:type", Number)
+], Workout.prototype, "order", void 0);
+__decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)

@@ -27,12 +27,11 @@ export class WhiteboardResolver {
     await Whiteboard.delete({ user_id: req.session.userId });
     const days = createMarkdown(data);
 
-    console.log(days);
-
     days.map(async (day) => {
       const whiteboard = await Whiteboard.create({
         day: day.day,
         user_id: req.session.userId,
+        order: day.order,
       }).save();
 
       const workouts = [day.one, day.two, day.three];
@@ -41,7 +40,8 @@ export class WhiteboardResolver {
         await Workout.create({
           title: workout.title,
           workout: workout.workout,
-          category_id: day.category,
+          order: workout.order,
+          category_id: parseInt(day.category),
           whiteboard_id: whiteboard.id,
         }).save();
       });
@@ -61,10 +61,11 @@ export class WhiteboardResolver {
       .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
       .where("user_id = :id ", { id: req.session.userId })
       .andWhere("day = :day", { day })
+      .orderBy({ "r.order": "ASC" })
       .getOne();
 
     if (!response) {
-      throw new Error("asdásd");
+      throw new Error("Something went wrong!");
     }
 
     return response;
@@ -77,10 +78,11 @@ export class WhiteboardResolver {
       .createQueryBuilder("w")
       .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
       .where("user_id = :id ", { id: req.session.userId })
+      .orderBy({ "w.order": "ASC", "r.order": "ASC" })
       .getMany();
 
     if (!response) {
-      throw new Error("asdásd");
+      throw new Error("Something went wrong!");
     }
 
     return response;

@@ -35,18 +35,19 @@ let WhiteboardResolver = class WhiteboardResolver {
         return __awaiter(this, void 0, void 0, function* () {
             yield Whiteboard_1.Whiteboard.delete({ user_id: req.session.userId });
             const days = createMarkdown_1.createMarkdown(data);
-            console.log(days);
             days.map((day) => __awaiter(this, void 0, void 0, function* () {
                 const whiteboard = yield Whiteboard_1.Whiteboard.create({
                     day: day.day,
                     user_id: req.session.userId,
+                    order: day.order,
                 }).save();
                 const workouts = [day.one, day.two, day.three];
                 workouts.map((workout) => __awaiter(this, void 0, void 0, function* () {
                     yield Workout_1.Workout.create({
                         title: workout.title,
                         workout: workout.workout,
-                        category_id: day.category,
+                        order: workout.order,
+                        category_id: parseInt(day.category),
                         whiteboard_id: whiteboard.id,
                     }).save();
                 }));
@@ -62,9 +63,10 @@ let WhiteboardResolver = class WhiteboardResolver {
                 .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
                 .where("user_id = :id ", { id: req.session.userId })
                 .andWhere("day = :day", { day })
+                .orderBy({ "r.order": "ASC" })
                 .getOne();
             if (!response) {
-                throw new Error("asdásd");
+                throw new Error("Something went wrong!");
             }
             return response;
         });
@@ -76,9 +78,10 @@ let WhiteboardResolver = class WhiteboardResolver {
                 .createQueryBuilder("w")
                 .innerJoinAndSelect("w.workout", "r", "r.whiteboard_id = w.id")
                 .where("user_id = :id ", { id: req.session.userId })
+                .orderBy({ "w.order": "ASC", "r.order": "ASC" })
                 .getMany();
             if (!response) {
-                throw new Error("asdásd");
+                throw new Error("Something went wrong!");
             }
             return response;
         });

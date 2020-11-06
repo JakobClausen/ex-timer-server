@@ -9,7 +9,7 @@ import {
   OneToMany,
   JoinColumn,
 } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Workout } from "./Workout";
 
@@ -23,6 +23,10 @@ export class Whiteboard extends BaseEntity {
   @Field(() => String)
   @Column()
   day!: string;
+
+  @Field(() => Int)
+  @Column()
+  order!: number;
 
   @Field()
   @Column()
