@@ -66,6 +66,7 @@ let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
                 .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
                 .where("user_id = :id ", { id: req.session.userId })
                 .andWhere("day = :day", { day })
+                .orderBy({ "w.start_time": "ASC" })
                 .getMany();
             if (!response) {
                 throw new Error("Something went wrong");
