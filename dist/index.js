@@ -31,6 +31,7 @@ const GymClass_1 = require("./entities/GymClass");
 const config_1 = require("./config/config");
 const cors_1 = __importDefault(require("cors"));
 const chalk_1 = __importDefault(require("chalk"));
+const CrossfitWorkout_1 = require("./resolvers/CrossfitWorkout");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield typeorm_1.createConnection({
         type: "postgres",
@@ -61,7 +62,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     const apolloSchema = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [user_1.UserResolver, Whiteboard_1.WhiteboardResolver, Schedule_1.ScheduleResolver],
+            resolvers: [
+                user_1.UserResolver,
+                Whiteboard_1.WhiteboardResolver,
+                Schedule_1.ScheduleResolver,
+                CrossfitWorkout_1.CrossfitWorkout,
+            ],
             validate: false,
         }),
         playground: true,

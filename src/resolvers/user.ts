@@ -1,7 +1,14 @@
 import { User } from "../entities/User";
 import { MyContext } from "src/types";
 import argon2 from "argon2";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../config/config";
 import {
   LoginData,
@@ -15,9 +22,16 @@ import { sendEmail } from "../utils/sendEmails";
 import { v4 } from "uuid";
 import { validateChangePassword } from "./validation/validateChangePassword";
 import { getConnection } from "typeorm";
+import { isAuth } from "../middleware/isAuth";
 
 @Resolver()
 export class UserResolver {
+  @Query(() => Boolean)
+  @UseMiddleware(isAuth)
+  async isLoggedIn(): Promise<boolean> {
+    return true;
+  }
+
   @Mutation(() => UserResponse)
   async changePassword(
     @Arg("token") token: string,
