@@ -22,6 +22,7 @@ import { GymClass } from "./entities/GymClass";
 import { COOKIE_NAME, DB_NAME, __PROD__ } from "./config/config";
 import cors from "cors";
 import chalk from "chalk";
+import { CrossfitWorkout } from "./resolvers/CrossfitWorkout";
 
 const main = async () => {
   // typeORM
@@ -65,7 +66,12 @@ const main = async () => {
   // Apollo server
   const apolloSchema = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, WhiteboardResolver, ScheduleResolver],
+      resolvers: [
+        UserResolver,
+        WhiteboardResolver,
+        ScheduleResolver,
+        CrossfitWorkout,
+      ],
       validate: false,
     }),
     playground: true,

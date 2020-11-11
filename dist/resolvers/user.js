@@ -36,7 +36,13 @@ const sendEmails_1 = require("../utils/sendEmails");
 const uuid_1 = require("uuid");
 const validateChangePassword_1 = require("./validation/validateChangePassword");
 const typeorm_1 = require("typeorm");
+const isAuth_1 = require("../middleware/isAuth");
 let UserResolver = class UserResolver {
+    isLoggedIn() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return true;
+        });
+    }
     changePassword(token, newPassword, { redis }) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = config_1.FORGET_PASSWORD_PREFIX + token;
@@ -183,6 +189,13 @@ let UserResolver = class UserResolver {
         });
     }
 };
+__decorate([
+    type_graphql_1.Query(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "isLoggedIn", null);
 __decorate([
     type_graphql_1.Mutation(() => userTypes_1.UserResponse),
     __param(0, type_graphql_1.Arg("token")),
