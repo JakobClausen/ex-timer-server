@@ -19,11 +19,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CrossfitWorkout = void 0;
+const getWODAPI_1 = require("../utils/getWODAPI");
 const type_graphql_1 = require("type-graphql");
 let CrossfitWorkout = class CrossfitWorkout {
     getRandomWorkout() {
         return __awaiter(this, void 0, void 0, function* () {
-            return "Random Workout";
+            const response = yield getWODAPI_1.getWODAPI();
+            if (!response) {
+                return "Something went wrong";
+            }
+            return response;
         });
     }
 };
