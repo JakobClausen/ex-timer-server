@@ -72,4 +72,19 @@ export class ScheduleResolver extends BaseEntity {
     }
     return response;
   }
+  @Query(() => [ScheduleResponse])
+  async getAllSchedule(@Ctx() { req }: MyContext): Promise<ScheduleResponse[]> {
+    const response = await getConnection()
+      .getRepository(Schedule)
+      .createQueryBuilder("s")
+      .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
+      .where("user_id = :id ", { id: req.session.userId })
+      .orderBy({ "w.start_time": "ASC" })
+      .getMany();
+
+    if (!response) {
+      throw new Error("Something went wrong");
+    }
+    return response;
+  }
 }
