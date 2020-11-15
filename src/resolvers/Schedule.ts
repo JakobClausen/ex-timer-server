@@ -11,7 +11,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { BaseEntity, getConnection } from "typeorm";
-import { ScheduleClassInput, ScheduleResponse } from "./types/ScheduleType";
+import { DayResponse, ScheduleClassInput } from "./types/ScheduleType";
 
 @Resolver()
 export class ScheduleResolver extends BaseEntity {
@@ -40,7 +40,7 @@ export class ScheduleResolver extends BaseEntity {
         user_id: req.session.userId,
       }).save();
 
-      day.classes.map(async (gymClass) => {
+      day.gymClass.map(async (gymClass) => {
         await GymClass.create({
           start_time: gymClass.start_time,
           end_time: gymClass.end_time,
@@ -53,17 +53,32 @@ export class ScheduleResolver extends BaseEntity {
     return true;
   }
 
-  @Query(() => [ScheduleResponse])
+  @Query(() => [DayResponse])
   async getDaySchedule(
     @Arg("day") day: string,
     @Ctx() { req }: MyContext
-  ): Promise<ScheduleResponse[]> {
+  ): Promise<DayResponse[]> {
     const response = await getConnection()
       .getRepository(Schedule)
       .createQueryBuilder("s")
       .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
       .where("user_id = :id ", { id: req.session.userId })
       .andWhere("day = :day", { day })
+      .orderBy({ "w.start_time": "ASC" })
+      .getMany();
+
+    if (!response) {
+      throw new Error("Something went wrong");
+    }
+    return response;
+  }
+  @Query(() => [DayResponse])
+  async getAllSchedule(@Ctx() { req }: MyContext): Promise<DayResponse[]> {
+    const response = await getConnection()
+      .getRepository(Schedule)
+      .createQueryBuilder("s")
+      .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
+      .where("user_id = :id ", { id: req.session.userId })
       .orderBy({ "w.start_time": "ASC" })
       .getMany();
 

@@ -46,7 +46,7 @@ let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
                     day: day.day,
                     user_id: req.session.userId,
                 }).save();
-                day.classes.map((gymClass) => __awaiter(this, void 0, void 0, function* () {
+                day.gymClass.map((gymClass) => __awaiter(this, void 0, void 0, function* () {
                     yield GymClass_1.GymClass.create({
                         start_time: gymClass.start_time,
                         end_time: gymClass.end_time,
@@ -74,6 +74,21 @@ let ScheduleResolver = class ScheduleResolver extends typeorm_1.BaseEntity {
             return response;
         });
     }
+    getAllSchedule({ req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield typeorm_1.getConnection()
+                .getRepository(Schedule_1.Schedule)
+                .createQueryBuilder("s")
+                .innerJoinAndSelect("s.gymClass", "w", "w.schedule_id = s.id")
+                .where("user_id = :id ", { id: req.session.userId })
+                .orderBy({ "w.start_time": "ASC" })
+                .getMany();
+            if (!response) {
+                throw new Error("Something went wrong");
+            }
+            return response;
+        });
+    }
 };
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
@@ -85,13 +100,20 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ScheduleResolver.prototype, "createSchedule", null);
 __decorate([
-    type_graphql_1.Query(() => [ScheduleType_1.ScheduleResponse]),
+    type_graphql_1.Query(() => [ScheduleType_1.DayResponse]),
     __param(0, type_graphql_1.Arg("day")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ScheduleResolver.prototype, "getDaySchedule", null);
+__decorate([
+    type_graphql_1.Query(() => [ScheduleType_1.DayResponse]),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ScheduleResolver.prototype, "getAllSchedule", null);
 ScheduleResolver = __decorate([
     type_graphql_1.Resolver()
 ], ScheduleResolver);
