@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScheduleResponse = exports.ClassResponse = exports.ScheduleClassInput = exports.ScheduleInput = exports.ClassInput = void 0;
+exports.DayResponse = exports.ClassResponse = exports.ScheduleClassInput = exports.ScheduleInput = exports.ClassInput = void 0;
 const type_graphql_1 = require("type-graphql");
 let ClassInput = class ClassInput {
 };
@@ -39,7 +39,7 @@ __decorate([
 __decorate([
     type_graphql_1.Field(() => [ClassInput]),
     __metadata("design:type", Array)
-], ScheduleInput.prototype, "classes", void 0);
+], ScheduleInput.prototype, "gymClass", void 0);
 ScheduleInput = __decorate([
     type_graphql_1.ObjectType(),
     type_graphql_1.InputType()
@@ -99,18 +99,18 @@ ClassResponse = __decorate([
     type_graphql_1.InputType()
 ], ClassResponse);
 exports.ClassResponse = ClassResponse;
-let ScheduleResponse = class ScheduleResponse {
+let DayResponse = class DayResponse {
 };
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
-], ScheduleResponse.prototype, "day", void 0);
+], DayResponse.prototype, "day", void 0);
 __decorate([
     type_graphql_1.Field(() => [ClassResponse]),
     __metadata("design:type", Array)
-], ScheduleResponse.prototype, "gymClass", void 0);
-ScheduleResponse = __decorate([
+], DayResponse.prototype, "gymClass", void 0);
+DayResponse = __decorate([
     type_graphql_1.ObjectType()
-], ScheduleResponse);
-exports.ScheduleResponse = ScheduleResponse;
+], DayResponse);
+exports.DayResponse = DayResponse;
 //# sourceMappingURL=ScheduleType.js.map

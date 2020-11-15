@@ -20,7 +20,7 @@ export class ScheduleInput {
   day!: string;
 
   @Field(() => [ClassInput])
-  classes!: ClassInput[];
+  gymClass!: ClassInput[];
 }
 
 @ObjectType()
@@ -64,7 +64,7 @@ export class ClassResponse {
 }
 
 @ObjectType()
-export class ScheduleResponse {
+export class DayResponse {
   @Field()
   day!: string;
 
