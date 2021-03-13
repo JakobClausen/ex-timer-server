@@ -2,12 +2,11 @@
 
 Gym hub is an service that digitises the gym environment 
 
+
 ## Installation
 
 Make sure you have a PostgreSQL database with password and username of "postgres"
 Add your database in the .env.example file and remove the .example extension
-
-(IMG)
 
 Start a [Redis](https://redis.io/) server in the terminal
 
